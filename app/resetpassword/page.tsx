@@ -1,34 +1,55 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '../../lib/firebase';
+import { useState } from "react";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "../../lib/firebase";
+import { ClipLoader } from 'react-spinners';
 
-export default function ResetPassword() {
-    const [email, setEmail] = useState('');
+const ResetPassword = () => {
+    const [email, setEmail] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
 
-    const handlePasswordReset = async () => {
+    const handleReset = async (e) => {
+        e.preventDefault();
+        setError("");
+        setSuccess("");
+        setIsLoading(true);
+
         try {
             await sendPasswordResetEmail(auth, email);
-            alert('Password reset email sent!');
+            setSuccess("Password reset email sent successfully.");
         } catch (error) {
-            console.error("Error:", error.message);
+            setError("Error: " + error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div className="h-screen flex flex-col items-center justify-center">
-            <h2 className="text-2xl mb-4">Reset Password</h2>
-            <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="w-full mb-4 p-2 border"
-            />
-            <button onClick={handlePasswordReset} className="bg-blue-500 text-white py-2 px-4 rounded">
-                Send Reset Email
-            </button>
+        <div className="flex flex-col items-center justify-center h-screen">
+            <form onSubmit={handleReset} className="bg-gray-100 p-6 rounded-md shadow-md w-80">
+                {error && <p className="text-red-500 mb-4">{error}</p>}
+                {success && <p className="text-green-500 mb-4">{success}</p>}
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="mb-4 p-2 border rounded w-full"
+                    required
+                />
+                <button
+                    type="submit"
+                    className="bg-[07327a] text-white px-4 py-2 rounded w-full"
+                    disabled={isLoading}
+                >
+                    {isLoading ? <ClipLoader size={20} color={"#fff"} /> : "Reset Password"}
+                </button>
+            </form>
         </div>
     );
-}
+};
+
+export default ResetPassword;
