@@ -26,8 +26,8 @@ const Header = () => {
 
     const handleLogout = async () => {
         try {
-            await signOut(auth); // Log out the user
-            router.push("/"); // Redirect to homepage after logging out
+            await signOut(auth);
+            router.push("/");
         } catch (error) {
             console.error("Error logging out:", error);
         }
@@ -56,7 +56,7 @@ const Header = () => {
                     </p>
                     <button
                         onClick={handleLogout}
-                        className="ml-4 bg-[#07327a] text-white py-2 px-4 rounded-md font-semibold"
+                        className="ml-4 bg-[#07327a] cursor-pointer text-white py-2 px-4 rounded-md font-semibold transform transition-transform duration-300 ease-in-out hover:scale-105"
                     >
                         Logout
                     </button>
@@ -64,7 +64,6 @@ const Header = () => {
             </header>
 
             {/* Fixed Image at the bottom-right of the page */}
-            {/* Do not render this image on the homepage */}
             {!isExcludedPage && (
                 <div className="fixed bottom-0 right-0 color-[#07327a]" >
                     <Image

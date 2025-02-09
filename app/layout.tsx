@@ -1,21 +1,22 @@
 import "../styles/globals.css";
-
 import Header from "../components/Header";
+import { ReactNode } from 'react';
+import { Metadata } from 'next';
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+
+
+export const metadata: Metadata = {
+  title: 'Chatter App',
+  description: 'Join our dev community!',
+  icons: {
+    icon: '/logo.png',
+  },
+};
+
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <title>Chatter App</title>
-        <meta name="description" content="Join our dev community!" />
-        <link rel="icon" href="/logo.png" />
-      </head>
       <body>
-
         <Header />
         <main>{children}</main>
       </body>

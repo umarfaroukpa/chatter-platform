@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
-
+import { useRouter } from 'next/navigation';
 
 const posts = [
     {
@@ -12,11 +12,12 @@ const posts = [
         isLiked: false,
         isBookmarked: false,
     },
-    // More posts...
+
 ];
 
 const FeedPage = () => {
     const [feedPosts, setFeedPosts] = useState(posts);
+    const router = useRouter();
 
     const handleLike = (postId: number) => {
         setFeedPosts((prevPosts) =>
@@ -26,6 +27,10 @@ const FeedPage = () => {
                     : post
             )
         );
+    };
+
+    const handleBack = () => {
+        router.back();
     };
 
     const handleBookmark = (postId: number) => {
@@ -82,9 +87,17 @@ const FeedPage = () => {
                     </div>
                 ))}
             </div>
-            <Link href="/">
-                <p className="bg-blue-600 text-white text-center py-3 px-6 rounded-lg">Go Back to Homepage</p>
-            </Link>
+            <div>
+
+                <div>
+                    <button onClick={handleBack} className="bg-blue-600 text-[#07327a] text-center py-3 px-6 rounded-lg">Go Back</button>
+                    <Link href="/">
+                        <p className="bg-blue-600 text-[#07327a] text-center py-3 px-6 rounded-lg">Go Back to Homepage</p>
+
+                    </Link>
+
+                </div>
+            </div>
         </div>
     );
 };
