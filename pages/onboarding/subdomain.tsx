@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 // Progress Bar Component
 const ProgressBar = ({ currentStep }: { currentStep: number }) => {
-    const steps = ["SignUp/Login", "About", "Personalize", "Domain Details", "Tags", "Subdomain"];
+    const steps = ["SignUp/Login", "About", "Personalize", "Domain Details", "Tags",];
 
     return (
         <div className="fixed top-1/2 left-4 transform -translate-y-1/2">
@@ -27,11 +27,27 @@ const SubdomainSelection = () => {
     const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
     const [errorMessage, setErrorMessage] = useState<string>("");
 
-    // Mock function to check subdomain availability (In production, replace with actual API call)
+    // API call to check subdomain availability
     const checkSubdomainAvailability = async (subdomain: string) => {
-        // A simple check (In reality, this would be a server call)
-        const takenSubdomains = ["Khalifa", "Zahra", "Sudais"];
-        return !takenSubdomains.includes(subdomain.toLowerCase());
+        try {
+            const response = await fetch("/api/checkSubdomain", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ subdomain }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to check subdomain availability.");
+            }
+
+            const data = await response.json();
+            return data.available;
+        } catch (error) {
+            console.error("Error checking subdomain availability:", error);
+            return false;
+        }
     };
 
     // Handle Subdomain Change
@@ -60,7 +76,7 @@ const SubdomainSelection = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen -mt-24">
+        <div className="flex flex-col items-center justify-center min-h-screen">
             <div className="">
                 <h1 className="text-4xl font-bold">Choose Your Subdomain</h1>
                 <p className="text-lg text-[#787474] mb-8">
@@ -103,7 +119,7 @@ const SubdomainSelection = () => {
                         Back
                     </button>
                     <button
-                        className="bg-[#07327a] text-white py-2 px-6 rounded-lg transform transition-transform duration-300 ease-in-out hover:scale-105"
+                        className="cursor-pointer bg-[#07327a] text-white py-2 px-6 rounded-lg transform transition-transform duration-300 ease-in-out hover:scale-105"
                         onClick={handleNext}
                         disabled={!isAvailable || subdomain.length < 3}
                     >

@@ -3,8 +3,9 @@
 import { useState, useEffect, Suspense } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ClipLoader } from 'react-spinners';
-import { auth } from "../../../lib/firebase";
+import { ClipLoader } from "react-spinners";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../../../lib/firebase";
 
 const RegisterPageContent = () => {
     const [email, setEmail] = useState("");
@@ -23,14 +24,29 @@ const RegisterPageContent = () => {
         }
     }, [searchParams]);
 
-    const handleRegister = async (e) => {
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
-        setSuccessMessage(""); // Reset any previous success messages
+        setSuccessMessage("");
         setIsLoading(true);
 
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
+            // Firebase Authentication registration
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Save user data to Firestore
+            const userData = {
+                username: "Your default username", 
+                userType: "standard", 
+                tags: [], 
+                posts: [],
+                bookmarks: [],
+                comments: [],
+            };
+
+            await setDoc(doc(db, "users", user.uid), userData);
+
             if (rememberMe) {
                 localStorage.setItem("savedEmail", email);
                 localStorage.setItem("savedPassword", password);
@@ -38,11 +54,12 @@ const RegisterPageContent = () => {
                 localStorage.removeItem("savedEmail");
                 localStorage.removeItem("savedPassword");
             }
+
             setSuccessMessage("User registered successfully!");
             setTimeout(() => {
                 router.push("/dashboard");
-            }, 1500);  // Redirect after a short delay
-        } catch (error) {
+            }, 1500);
+        } catch (error: any) {
             if (error.code === "auth/weak-password") {
                 setError("Password should be at least 6 characters.");
             } else {
@@ -94,11 +111,8 @@ const RegisterPageContent = () => {
                 </button>
             </form>
         </div>
-
     );
 };
-
-
 
 const RegisterPage = () => {
     return (

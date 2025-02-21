@@ -1,28 +1,42 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import logo from "../public/logo.png";
-import vectorImage from "../public/vector.png";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { auth } from "../lib/firebase";
+import logo from "../public/logo.png";
+import { UserCircle } from "lucide-react";
 
 const Header = () => {
-    const [isExcludedPage, setIsExcludedPage] = useState(false);
-    const pathname = usePathname();
+    const [user, setUser] = useState<User | null>(null);
+    const [showDropdown, setShowDropdown] = useState(false);
     const router = useRouter();
+    const pathname = usePathname();
+
+    // If pathname is null (router not ready), return null to avoid issues
+    if (!pathname) {
+        return null;
+    }
+
+    // Convert the pathname to lowercase
+    const normalizedPathname = pathname.toLowerCase();
+
+    // Exclude these paths from showing the header
+    const excludedPaths = ["/", "/auth/login", "/auth/register", "/dashboard/profilesetup", "/resetpassword"];
+    const isExcludedPage = excludedPaths.includes(normalizedPathname);
 
     useEffect(() => {
-        //  Idefine paths where the header and the image should not be shown
-        const excludedPaths = ["/", "/auth/login", "/auth/register", "/resetpassword"];
+        const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+            if (authUser) {
+                setUser(authUser);
+            } else {
+                setUser(null);
+            }
+        });
 
-        // Normalize the pathname to lowercase and split by "/"
-        const normalizedPath = pathname?.toLowerCase().split("?")[0];
-
-        // Check if the current path is in the excluded list
-        setIsExcludedPage(excludedPaths.includes(normalizedPath || ""));
-    }, [pathname]);
+        return () => unsubscribe();
+    }, []);
 
     const handleLogout = async () => {
         try {
@@ -33,48 +47,63 @@ const Header = () => {
         }
     };
 
-    // Return null to not render the header on excluded pages
+    const toggleDropdown = () => {
+        setShowDropdown((prev) => !prev);
+    };
+
+    // If the current page is excluded, don't render the header
     if (isExcludedPage) {
         return null;
     }
 
     return (
-        <>
-            <header className="flex items-center justify-between p-4 bg-white shadow-md">
-                <Link href="/" className="flex items-center">
-                    <Image src={logo} alt="Logo" width={50} height={50} />
-                    <span className="ml-2 text-2xl font-bold text-black">Chatter</span>
-                </Link>
+        <header className="flex items-center justify-between p-4 bg-white shadow-md z-50 relative">
+            <Link href="/" className="flex items-center">
+                <Image src={logo} alt="Logo" width={50} height={50} />
+                <span className="ml-2 text-2xl font-bold text-black">Chatter</span>
+            </Link>
 
-                {/* Show "Need help" and "Logout" on all pages except excluded pages */}
-                <div className="flex items-center">
-                    <p className="text-sm text-[#273c46] py-2 px-4">
-                        Having troubles?{" "}
-                        <Link href="/resetpassword" className="text-[#07327a] font-semibold">
-                            Need help?
-                        </Link>
-                    </p>
-                    <button
-                        onClick={handleLogout}
-                        className="ml-4 bg-[#07327a] cursor-pointer text-white py-2 px-4 rounded-md font-semibold transform transition-transform duration-300 ease-in-out hover:scale-105"
+            <div className="flex items-center space-x-4">
+                <p className="text-sm text-[#273c46] py-2 px-4">
+                    Having troubles?{" "}
+                    <Link href="/resetpassword" className="text-[#07327a] font-semibold">
+                        Need help?
+                    </Link>
+                </p>
+
+                {user ? (
+                    <div className="relative">
+                        <button onClick={toggleDropdown} className="flex items-center space-x-2">
+                            <UserCircle className="h-6 w-6 text-[#07327a]" />
+                        </button>
+
+                        {showDropdown && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white shadow-md rounded-lg z-50">
+                                <Link
+                                    href="/dashboard/profilesetup"
+                                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                >
+                                    Account
+                                </Link>
+                                <button
+                                    onClick={handleLogout}
+                                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <Link
+                        href="/auth/login"
+                        className="ml-4 bg-[#07327a] cursor-pointer text-white py-2 px-4 rounded-md font-semibold hover:scale-105 transition-transform duration-300"
                     >
-                        Logout
-                    </button>
-                </div>
-            </header>
-
-            {/* Fixed Image at the bottom-right of the page */}
-            {!isExcludedPage && (
-                <div className="fixed bottom-0 right-0 color-[#07327a]" >
-                    <Image
-                        src={vectorImage}
-                        alt="Vector Image"
-                        width={620}
-                        height={150}
-                    />
-                </div>
-            )}
-        </>
+                        Login
+                    </Link>
+                )}
+            </div>
+        </header>
     );
 };
 

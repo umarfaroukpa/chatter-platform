@@ -81,17 +81,17 @@ const TagsSelection = () => {
                         <button
                             key={name}
                             onClick={() => handleTagSelect(name)}
-                            className={`relative flex items-center border-2 rounded-2xl p-4 w-72 h-28 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                            className={`relative flex items-center  rounded-2xl p-4 w-72 h-28 bg-gray-100 transform transition-transform duration-300 ease-in-out hover:scale-105 
                         focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a]
-                        ${selectedTags.includes(name) ? 'bg-[#07327a] text-white border-[#07327a] shadow-lg' : 'text-[#07327a] border-gray-300'}`}
+                        ${selectedTags.includes(name) ? 'bg-[#07327a] border-[#07327a] shadow-lg' : ' border-gray-300'}`}
                         >
                             <div className="flex items-center">
-                                <Icon size={35} className={`${selectedTags.includes(name) ? 'text-white' : 'text-[#07327a]'}`} />
+                                <Icon size={35} className={`${selectedTags.includes(name) ? '' : ''}`} />
                             </div>
                             <div className="ml-4 flex-grow">
                                 <span>{name}</span>
                             </div>
-                            <div className={`p-2 border-2 rounded-full ml-4 ${selectedTags.includes(name) ? 'border-white' : 'border-gray-300'}`}>
+                            <div className={`p-2  ml-4 ${selectedTags.includes(name) ? 'border-white' : 'border-gray-300'}`}>
                                 {selectedTags.includes(name) ? (
                                     <CheckCircle size={24} className="text-green-500" />
                                 ) : (
@@ -107,17 +107,17 @@ const TagsSelection = () => {
                         <button
                             key={name}
                             onClick={() => handleTagSelect(name)}
-                            className={`relative flex items-center py-6 px-8 border-2 rounded-2xl p-4 w-72 h-28 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                            className={`relative flex items-center py-6 px-8  rounded-2xl p-4 w-72 h-28 bg-gray-100 transform transition-transform duration-300 ease-in-out hover:scale-105 
                         focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a]
-                        ${selectedTags.includes(name) ? 'bg-[#07327a] text-white border-[#07327a] shadow-lg' : 'text-[#07327a] border-gray-300'}`}
+                        ${selectedTags.includes(name) ? 'bg-[#07327a]  border-[#07327a] shadow-lg' : ' border-gray-300'}`}
                         >
                             <div className="flex items-center ">
-                                <Icon size={35} className={`${selectedTags.includes(name) ? 'text-white' : 'text-[#07327a]'}`} />
+                                <Icon size={35} className={`${selectedTags.includes(name) ? '' : ''}`} />
                             </div>
                             <div className="ml-4 flex-grow">
                                 <span>{name}</span>
                             </div>
-                            <div className={`p-2 border-2 rounded-full ml-4 ${selectedTags.includes(name) ? 'border-white' : 'border-gray-300'}`}>
+                            <div className={`p-2 ml-4 ${selectedTags.includes(name) ? 'border-white' : 'border-gray-300'}`}>
                                 {selectedTags.includes(name) ? (
                                     <CheckCircle size={24} className="text-green-500" />
                                 ) : (
@@ -128,7 +128,7 @@ const TagsSelection = () => {
                     ))}
                 </div>
 
-                <div className="flex space-x-4 mt-6">
+                <div className="flex space-x-4 mt-10">
                     <button className="text-[#787474] py-2 px-6 rounded-lg border-2 border-gray-300 cursor-pointer transform transition-transform duration-300 ease-in-out hover:scale-105 " onClick={() => router.back()}>
                         Back
                     </button>

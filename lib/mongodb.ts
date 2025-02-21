@@ -3,6 +3,7 @@ import mongoose, { Mongoose } from "mongoose";
 const MONGODB_URI: string = process.env.MONGODB_URI as string;
 
 if (!MONGODB_URI) {
+    console.error('MONGODB_URI not found!');
     throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
 }
 

@@ -1,8 +1,6 @@
-"use client";
-
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, PlusCircle } from "lucide-react";
 
 // Progress Bar Component
 const ProgressBar = ({ currentStep }: { currentStep: number }) => {
@@ -52,53 +50,60 @@ const WriterType = () => {
                         {/* New Blogger */}
                         <div
                             onClick={() => handleSelect("new")}
-                            className={`cursor-pointer  rounded-lg p-6  w-60 flex items-center  bg-gray-100 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                            className={`cursor-pointer flex items-center space-x-4 p-6  w-60 bg-gray-100 rounded-2xl transform transition-transform duration-300 ease-in-out hover:scale-105 
                                 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a] 
-                                ${selectedType === "new" ? "border-[#07327a] shadow-lg rounded-2xl" : "border-gray-300 rounded-lg"}`}
+                                ${selectedType === "new" ? "bg-[#07327a] border-[#07327a] shadow-lg" : "border-gray-300"}`}
                         >
-
                             <div>
-                                <h4 className="flex font-semibold text-center">I am New Blogger</h4>
+                                <h4 className="font-semibold text-center">I am New Blogger</h4>
                             </div>
-                            {selectedType === "new" && (
-                                <CheckCircle className="ml-2 text-green-500" size={24} />
-                            )}
+                            <div className="ml-4">
+                                {selectedType === "new" ? (
+                                    <CheckCircle className="text-green-500" size={24} />
+                                ) : (
+                                    <PlusCircle className="text-gray-400" size={24} />
+                                )}
+                            </div>
                         </div>
 
-
+                        {/* Professional Writer */}
                         <div
                             onClick={() => handleSelect("professional")}
-                            className={`cursor-pointer  rounded-lg p-6 w-60 flex items-center space-x-4 [#07327a] bg-gray-100 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                            className={`cursor-pointer flex items-center space-x-4 p-6 w-72 bg-gray-100 rounded-2xl transform transition-transform duration-300 ease-in-out hover:scale-105 
                                 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a] 
-                                ${selectedType === "professional" ? "border-[#07327a] shadow-lg rounded-2xl" : "border-gray-300 rounded-lg"}`}
+                                ${selectedType === "professional" ? "bg-[#07327a] border-[#07327a] shadow-lg" : "border-gray-300"}`}
                         >
-
                             <div>
-                                <h4 className=" font-semibold text-center text-base">I am Professional Writer</h4>
+                                <h4 className="font-semibold text-center text-base">I am Professional Writer</h4>
                             </div>
-                            {selectedType === "professional" && (
-                                <CheckCircle className=" text-green-500" size={24} />
-                            )}
+                            <div className="ml-6">
+                                {selectedType === "professional" ? (
+                                    <CheckCircle className="text-green-500" size={24} />
+                                ) : (
+                                    <PlusCircle className="text-gray-400" size={24} />
+                                )}
+                            </div>
                         </div>
                     </div>
 
-
-                    <div className="flex">
+                    {/* Casual Writer */}
+                    <div className="flex mt-10">
                         <div
                             onClick={() => handleSelect("casual")}
-                            className={`cursor-pointer  rounded-lg p-6 w-60 flex items-center space-x-4 bg-gray-100 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                            className={`cursor-pointer flex items-center space-x-4 p-6 w-60 bg-gray-100 rounded-2xl transform transition-transform duration-300 ease-in-out hover:scale-105 
                                 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a] 
-                                ${selectedType === "casual" ? "border-[#07327a] shadow-lg rounded-2xl" : "border-gray-300 rounded-lg"}`}
+                                ${selectedType === "casual" ? "bg-[#07327a] border-[#07327a] shadow-lg" : "border-gray-300"}`}
                         >
-
                             <div>
-                                <h4 className="font-semibold text-base text-center leading-tight">
-                                    I Write Casually
-                                </h4>
+                                <h4 className="font-semibold text-base text-center leading-tight">I Write Casually</h4>
                             </div>
-                            {selectedType === "casual" && (
-                                <CheckCircle className="ml-2 text-green-500" size={24} />
-                            )}
+                            <div className="ml-4">
+                                {selectedType === "casual" ? (
+                                    <CheckCircle className="text-green-500" size={24} />
+                                ) : (
+                                    <PlusCircle className="text-gray-400" size={24} />
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
