@@ -40,7 +40,8 @@ const LoginPageContent = () => {
         setIsLoading(true);
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            console.log("User signed in:", userCredential.user.uid); // Debug: Log UID
             if (rememberMe) {
                 localStorage.setItem("savedEmail", email);
                 localStorage.setItem("savedPassword", password);
@@ -51,28 +52,49 @@ const LoginPageContent = () => {
             setSuccessMessage("Login successful!");
             setTimeout(() => {
                 router.push("/dashboard");
-                // Redirect after a short delay
             }, 1500);
-        } catch {
-
-            setError("Login failed.");
-
+        } catch (error: any) {
+            console.error("Firebase login error:", error.code, error.message); // Detailed logging
+            switch (error.code) {
+                case "auth/user-not-found":
+                    setError("No user found with this email.");
+                    break;
+                case "auth/wrong-password":
+                    setError("Incorrect password.");
+                    break;
+                case "auth/invalid-email":
+                    setError("Invalid email format.");
+                    break;
+                case "auth/invalid-credential":
+                    setError("Invalid credentials provided.");
+                    break;
+                case "auth/too-many-requests":
+                    setError("Too many login attempts. Please try again later.");
+                    break;
+                default:
+                    setError(`Login failed: ${error.message} (Code: ${error.code})`);
+            }
         } finally {
             setIsLoading(false);
         }
     };
-
     const handlePasswordReset = async () => {
+        setError(null);
+        setSuccessMessage(null);
+        if (!email) {
+            setError("Please enter your email to reset the password.");
+            return;
+        }
         try {
             await sendPasswordResetEmail(auth, email);
             setSuccessMessage("Password reset email sent successfully.");
-        } catch {
-            setError("Failed to send password reset email.");
+        } catch (error: any) {
+            console.error("Password reset error:", error.code, error.message);
+            setError(`Failed to send password reset email: ${error.message}`);
         }
     };
 
     return (
-
         <div className="flex flex-col items-center justify-center h-screen">
             <h1 className="text-2xl font-bold mb-4">Login</h1>
             <form onSubmit={handleLogin} className="bg-gray-100 p-6 rounded-md shadow-md w-80">
@@ -117,17 +139,15 @@ const LoginPageContent = () => {
                 </button>
             </form>
         </div>
-
     );
 };
-
 
 const LoginPage = () => {
     return (
         <Suspense fallback={<p>Loading...</p>}>
             <LoginPageContent />
         </Suspense>
-    )
-}
+    );
+};
 
 export default LoginPage;

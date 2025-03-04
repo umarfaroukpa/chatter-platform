@@ -75,7 +75,7 @@ const CustomDomain = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen -mt-24">
+        <div className="flex flex-col items-center justify-center min-h-screen -mt-32">
             <div>
                 <h1 className="text-4xl font-bold">Map Your Custom Domain To Chatter</h1>
                 <p className="text-lg text-[#787474] mb-8">Your domain should point to Chatter for your blog to open.</p>

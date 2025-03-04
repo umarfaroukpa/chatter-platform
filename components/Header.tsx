@@ -23,7 +23,7 @@ const Header = () => {
     const normalizedPathname = pathname.toLowerCase();
 
     // Exclude these paths from showing the header
-    const excludedPaths = ["/", "/auth/login", "/auth/register", "/dashboard/profilesetup", "/resetpassword"];
+    const excludedPaths = ["/", "/auth/login", "/auth/register", "/dashboard/profilesetup", "/resetpassword", "/feed"];
     const isExcludedPage = excludedPaths.includes(normalizedPathname);
 
     useEffect(() => {

@@ -63,7 +63,7 @@ export default function Page() {
     };
 
     return (
-        <div className="relative flex justify-center items-center h-screen -mt-24">
+        <div className="relative flex justify-center items-center h-screen -mt-40">
             {/* Display error or success messages */}
             {logoutError && <p className="text-[#787474] mb-4">{logoutError}</p>}
             {successMessage && <p className="text-[#787474] mb-4">{successMessage}</p>}

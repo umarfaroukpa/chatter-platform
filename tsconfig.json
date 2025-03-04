@@ -1,8 +1,16 @@
 {
   "compilerOptions": {
+    // Good for relative imports
     "baseUrl": ".",
-    "types": [],
+    "types": [
+      "node",
+      "react",
+      "react-dom"
+    ], // Explicitly include common types
     "paths": {
+      "@/*": [
+        "./*"
+      ], // Simplified path for root imports (adjust if needed)
       "next/router": [
         "node_modules/next/dist/client/router"
       ],
@@ -17,7 +25,7 @@
       ]
     },
     "jsx": "preserve",
-    "target": "ES6",
+    "target": "ES5",
     "lib": [
       "dom",
       "dom.iterable",
@@ -26,10 +34,11 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
+    "strictNullChecks": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "ESNext",
+    "module": "esnext",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
@@ -39,8 +48,7 @@
       {
         "name": "next"
       }
-    ],
-    "strictNullChecks": true
+    ]
   },
   "include": [
     "**/*.ts",

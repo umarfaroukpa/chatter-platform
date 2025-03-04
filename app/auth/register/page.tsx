@@ -4,8 +4,8 @@ import { useState, useEffect, Suspense } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ClipLoader } from "react-spinners";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../../../lib/firebase";
+import axios from "axios"; // Add axios for API call
+import { auth } from "../../../lib/firebase";
 
 const RegisterPageContent = () => {
     const [email, setEmail] = useState("");
@@ -35,17 +35,25 @@ const RegisterPageContent = () => {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Save user data to Firestore
+            // Save user data to MongoDB via /api/profile
             const userData = {
-                username: "Your default username", 
-                userType: "standard", 
-                tags: [], 
+                uid: user.uid,
+                username: "Your default username",
+                userType: "standard",
+                email: email,
+                phoneNumber: "",
+                profilePicUrl: "",
+                tags: [],
                 posts: [],
                 bookmarks: [],
                 comments: [],
             };
 
-            await setDoc(doc(db, "users", user.uid), userData);
+            const response = await axios.post("/api/profile", {
+                uid: user.uid,
+                profileData: userData,
+            });
+            console.log("MongoDB save response:", response.data); // Debug: Log API response
 
             if (rememberMe) {
                 localStorage.setItem("savedEmail", email);
@@ -60,10 +68,13 @@ const RegisterPageContent = () => {
                 router.push("/dashboard");
             }, 1500);
         } catch (error: any) {
+            console.error("Registration error:", error.code || error.response?.status, error.message || error);
             if (error.code === "auth/weak-password") {
                 setError("Password should be at least 6 characters.");
+            } else if (error.code === "auth/email-already-in-use") {
+                setError("Email already in use.");
             } else {
-                setError("Error: " + error.message);
+                setError(`Error: ${error.message || "Unknown error occurred"}`);
             }
         } finally {
             setIsLoading(false);

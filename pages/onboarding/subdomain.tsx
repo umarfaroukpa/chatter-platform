@@ -76,7 +76,7 @@ const SubdomainSelection = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center justify-center min-h-screen -mt-32">
             <div className="">
                 <h1 className="text-4xl font-bold">Choose Your Subdomain</h1>
                 <p className="text-lg text-[#787474] mb-8">

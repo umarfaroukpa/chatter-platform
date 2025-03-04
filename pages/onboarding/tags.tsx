@@ -56,23 +56,23 @@ const TagsSelection = () => {
     );
 
     return (
-        <div className=" flex flex-col  items-center justify-center  min-h-screen text-right">
-            <div className=" flex flex-col w-[400px] ">
+        <div className="flex flex-col  items-center justify-center  min-h-screen text-right -mt-24">
+            <div className="flex flex-col w-[400px]">
                 <h1 className="text-3xl font-bold">Choose Your Tags</h1>
                 <p className="text-base opacity-90 text-[#787474] text-left mb-6">
                     We use tags to personalize your feed and make it easier to discover relevant content.
                 </p>
 
                 {/* Search Bar */}
-                <div className="flex items-center relative mb-8 w-60">
+                <div className="flex items-center border-e-0 relative mb-8 w-60">
                     <input
                         type="text"
-                        className="border border-gray-300 w-full py-3 px-4 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#07327a]"
+                        className="border border-gray-300  w-full py-3 px-4 pl-10 text-sm  focus:outline-none focus:ring-2 focus:ring-[#07327a]"
                         placeholder="Search tags..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <Search className="cursor-pointer text-[#787474] bg-[#07327a] transform transition-transform duration-300 ease-in-out hover:scale-105 " size={45} />
+                    <Search className="cursor-pointer text-[#787474] bg-[#07327a] transform transition-transform duration-300 ease-in-out hover:scale-105 " size={21.5} />
                 </div>
 
                 {/* Tags Layout */}
@@ -128,7 +128,7 @@ const TagsSelection = () => {
                     ))}
                 </div>
 
-                <div className="flex space-x-4 mt-10">
+                <div className="flex space-x-4">
                     <button className="text-[#787474] py-2 px-6 rounded-lg border-2 border-gray-300 cursor-pointer transform transition-transform duration-300 ease-in-out hover:scale-105 " onClick={() => router.back()}>
                         Back
                     </button>

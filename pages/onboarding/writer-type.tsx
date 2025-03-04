@@ -37,7 +37,7 @@ const WriterType = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center justify-center min-h-screen -mt-24">
             <div>
                 <h1 className="text-4xl font-bold">What kind of writer are you?</h1>
                 <p className="text-lg text-[#787474] opacity-80 mb-8">

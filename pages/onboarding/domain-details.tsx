@@ -35,7 +35,7 @@ const DomainDetails = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen text-center">
+        <div className="flex flex-col items-center justify-center min-h-screen text-center -mt-24">
             <div className="text-left">
                 <h1 className="text-4xl font-bold">Choose the type of domain you want</h1>
                 <p className="text-lg text-[#787474] mb-12">Choose where you want your blog to be located.</p>

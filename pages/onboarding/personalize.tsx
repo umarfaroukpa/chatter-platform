@@ -39,7 +39,8 @@ const Personalize = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-start min-h-screen mt-24 space-x-8">
+        <div className="flex flex-col items-center justify-start min-h-screen space-x-8">
+
             <h1 className="text-4xl font-bold">Select All That Applies To You</h1>
             <p className="text-lg opacity-80 text-[#787474] text-left mb-6">
                 This will help us personalize your experience to reach your goals.
@@ -47,12 +48,14 @@ const Personalize = () => {
 
             {/* Button Layout */}
             <div className="flex flex-col items-start justify-start space-y-8">
+
                 {/* First row: To Gain Depth, To Find Something New */}
                 <div className="flex space-x-8 items-start py-3">
                     <button
                         onClick={() => handleSelect("To Gain Depth")}
-                        className={`relative flex items-center py-6 px-10 rounded-2xl w-96 h-36 bg-gray-100
-                            ${selections.includes("To Gain Depth") ? "bg-[#07327a] border-[#07327a] shadow-lg " : "border-gray-300 text-black"}
+                        className={`relative flex items-center py-6 px-8 border-2 rounded-2xl p-4 w-72 h-28 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                            focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a]
+                            ${selections.includes("To Gain Depth") ? "" : "border-gray-300 text-black"}
                         `}
                     >
                         {/* Icon Wrapper with Border Radius */}
@@ -73,8 +76,9 @@ const Personalize = () => {
 
                     <button
                         onClick={() => handleSelect("To Find Something New")}
-                        className={`relative flex items-center py-6 px-10 rounded-2xl w-96 h-36 bg-gray-100
-                            ${selections.includes("To Find Something New") ? "bg-[#07327a] border-[#07327a] shadow-lg " : "border-gray-300 text-black"}
+                        className={`relative flex items-center py-6 px-8 border-2 rounded-2xl p-4 w-72 h-28 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                            focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a]
+                            ${selections.includes("To Find Something New") ? " " : "border-gray-300 text-black"}
                         `}
                     >
                         {/* Icon Wrapper with Border Radius */}
@@ -95,11 +99,12 @@ const Personalize = () => {
                 </div>
 
                 {/* Second row: To Explore Answers, To Find Inspiration */}
-                <div className="flex space-x-8 py-3">
+                <div className="flex mt-4 space-x-8 py-3">
                     <button
                         onClick={() => handleSelect("To Explore Answers")}
-                        className={`relative flex items-center py-6 px-10 rounded-2xl w-96 h-36 bg-gray-100
-                            ${selections.includes("To Explore Answers") ? "bg-[#07327a] border-[#07327a] shadow-lg " : "border-gray-300 text-black"}
+                        className={`relative flex items-center py-6 px-8 border-2 rounded-2xl p-4 w-72 h-28 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                            focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a]
+                            ${selections.includes("To Explore Answers") ? " " : "border-gray-300 text-black"}
                         `}
                     >
                         {/* Icon Wrapper with Border Radius */}
@@ -120,8 +125,9 @@ const Personalize = () => {
 
                     <button
                         onClick={() => handleSelect("To Find Inspiration")}
-                        className={`relative flex items-center py-6 px-10 rounded-2xl w-96 h-36 bg-gray-100
-                            ${selections.includes("To Find Inspiration") ? "bg-[#07327a] border-[#07327a] shadow-lg " : "border-gray-300 text-black"}
+                        className={`relative flex items-center py-6 px-8 border-2 rounded-2xl p-4 w-72 h-28 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                            focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a]
+                            ${selections.includes("To Find Inspiration") ? " " : "border-gray-300 text-black"}
                         `}
                     >
                         {/* Icon Wrapper with Border Radius */}
@@ -142,16 +148,17 @@ const Personalize = () => {
                 </div>
 
                 {/* Last row: To Explore Chatter (spans two columns) */}
-                <div className="flex justify-center py-3 mb-12">
+                <div className="mt-4 flex justify-center py-3 mb-12">
                     <button
                         onClick={() => handleSelect("To Explore Chatter")}
-                        className={`relative flex items-center py-6 px-10 col-span-2 rounded-2xl w-96 h-36 bg-gray-100
-                            ${selections.includes("To Explore Chatter") ? "bg-[#07327a] border-[#07327a] shadow-lg " : "border-gray-300 text-black"}
+                        className={`relative flex items-center py-6 px-8 border-2 rounded-2xl p-4 w-72 h-28 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                            focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a]
+                            ${selections.includes("To Explore Chatter") ? " " : "border-gray-300 text-black"}
                         `}
                     >
                         {/* Icon Wrapper with Border Radius */}
                         <div className={`p-2 border-2 rounded-full ${selections.includes("To Explore Chatter") ? "border-white" : "border-gray-300"}`}>
-                            <Compass size={40} className={`${selections.includes("To Explore Chatter") ? "text-white" : "text-[#787474]"}`} />
+                            <Compass size={40} className={`${selections.includes("To Explore Chatter") ? "" : "text-[#787474]"}`} />
                         </div>
                         <div className="ml-6 flex-grow">
                             <span className="ml-2 text-lg">To Explore Chatter</span>
@@ -179,6 +186,7 @@ const Personalize = () => {
                     >
                         Next
                     </button>
+
                 </div>
             </div>
 
