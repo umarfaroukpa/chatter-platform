@@ -1,7 +1,12 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
+
+// Export the interface for use in API handlers
+export interface ISubdomain extends Document {
+    subdomain: string;
+}
 
 // Define a schema for the subdomain
-const SubdomainSchema = new mongoose.Schema({
+const SubdomainSchema = new Schema<ISubdomain>({
     subdomain: {
         type: String,
         required: true,
@@ -11,6 +16,7 @@ const SubdomainSchema = new mongoose.Schema({
 });
 
 // Export the Subdomain model
-const Subdomain = mongoose.models.Subdomain || mongoose.model("Subdomain", SubdomainSchema);
+const Subdomain = mongoose.models.Subdomain as mongoose.Model<ISubdomain> ||
+    mongoose.model<ISubdomain>("Subdomain", SubdomainSchema);
 
 export default Subdomain;

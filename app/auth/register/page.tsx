@@ -4,8 +4,9 @@ import { useState, useEffect, Suspense } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ClipLoader } from "react-spinners";
-import axios from "axios"; // Add axios for API call
+import axios from "axios";
 import { auth } from "../../../lib/firebase";
+import admin from 'firebase-admin';
 
 const RegisterPageContent = () => {
     const [email, setEmail] = useState("");
@@ -49,11 +50,23 @@ const RegisterPageContent = () => {
                 comments: [],
             };
 
-            const response = await axios.post("/api/profile", {
+            const mongoResponse = await axios.post("/api/profile", {
                 uid: user.uid,
                 profileData: userData,
             });
-            console.log("MongoDB save response:", response.data); // Debug: Log API response
+            console.log("MongoDB save response:", mongoResponse.data);
+
+            // Save user data to Firestore via API call (create a new endpoint)
+            const firestoreResponse = await axios.post("/api/save-to-firestore", {
+                uid: user.uid,
+                userData: {
+                    uid: user.uid,
+                    email: email,
+                    username: userData.username,
+                    bookmarks: [],
+                },
+            });
+            console.log("Firestore save response:", firestoreResponse.data);
 
             if (rememberMe) {
                 localStorage.setItem("savedEmail", email);
@@ -81,6 +94,7 @@ const RegisterPageContent = () => {
         }
     };
 
+    // Rest of your component remains unchanged
     return (
         <div className="flex flex-col items-center justify-center h-screen">
             <form onSubmit={handleRegister} className="bg-gray-100 p-6 rounded-md shadow-md w-80">

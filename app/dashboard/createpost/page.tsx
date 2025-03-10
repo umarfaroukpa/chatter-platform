@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { auth } from "../lib/firebase";
+import { auth } from "../../../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import RichTextEditor from "../components/TextEditor";
+import RichTextEditor from "../../../components/TextEditor";
 
 const CreatePostPage = () => {
     const [title, setTitle] = useState("");
@@ -85,7 +85,7 @@ const CreatePostPage = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="title" className="block text-sm font-medium text-[#787474] mb-1">
                         Post Title
                     </label>
                     <input
@@ -94,13 +94,13 @@ const CreatePostPage = () => {
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="Enter a compelling title..."
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#07327a] focus:border-[#07327a]"
                         required
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="content" className="block text-sm font-medium text-[#787474S] mb-1">
                         Post Content
                     </label>
                     <RichTextEditor
@@ -110,7 +110,7 @@ const CreatePostPage = () => {
                 </div>
 
                 <div>
-                    <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="tags" className="block text-sm font-medium text-[#787474] mb-1">
                         Tags (comma separated)
                     </label>
                     <input
@@ -119,7 +119,7 @@ const CreatePostPage = () => {
                         value={tags}
                         onChange={(e) => setTags(e.target.value)}
                         placeholder="technology, news, tutorial, etc."
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#07327a] focus:border-[#07327a]"
                     />
                 </div>
 
@@ -127,14 +127,14 @@ const CreatePostPage = () => {
                     <button
                         type="button"
                         onClick={() => router.push('/feed')}
-                        className="mr-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                        className="mr-2 px-4 py-2 text-sm font-medium text-[#787474] bg-white border border-gray-300 rounded-md hover:bg-gray-50"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="px-4 py-2 text-sm font-medium text-white bg-[#07327a] rounded-md hover:bg-[#07327a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#07327a]"
                     >
                         {loading ? 'Publishing...' : 'Publish Post'}
                     </button>

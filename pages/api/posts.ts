@@ -1,12 +1,23 @@
-// pages/api/posts.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import connectToDatabase from '../../lib/mongodb';
-import Post from '../../models/Post';
-import User from '../../models/User';
+import Post, { IPost } from '../../models/Post';
+import User, { IUserDocument } from '../../models/User';
 import { v4 as uuidv4 } from 'uuid';
+import { findOne, findOneAndUpdate, find, countDocuments } from '../../lib/mongoose-utils';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    // Handle POST request to create a new post
+interface ApiResponse {
+    success: boolean;
+    data?: any;
+    error?: string;
+    pagination?: {
+        total: number;
+        page: number;
+        limit: number;
+        pages: number;
+    };
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse>) {
     if (req.method === 'POST') {
         try {
             const { title, content, tags, uid } = req.body;
@@ -20,8 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             await connectToDatabase();
 
-            // Get the user to verify permissions and get author information
-            const user = await User.findOne({ uid }).exec();
+            // Use the utility function instead of direct mongoose method
+            const user = await findOne<IUserDocument>(User, { uid });
             if (!user) {
                 return res.status(404).json({
                     success: false,
@@ -29,7 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
             }
 
-            // Check if user is a Writer (optional, can enforce this check)
             if (user.userType !== 'Writer') {
                 return res.status(403).json({
                     success: false,
@@ -37,16 +47,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
             }
 
-            // Create post ID
             const postId = uuidv4();
 
-            // Create new post
             const newPost = new Post({
                 postId,
                 title,
                 content,
+                author: user.username || 'Anonymous',
                 authorId: uid,
-                authorName: user.username || 'Anonymous',
                 authorProfilePic: user.profilePicUrl || '',
                 tags: tags || [],
                 createdAt: new Date(),
@@ -57,10 +65,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             await newPost.save();
 
-            // Add post reference to user's posts array
-            await User.findOneAndUpdate(
+            // Use the utility function instead of direct mongoose method
+            await findOneAndUpdate<IUserDocument>(
+                User,
                 { uid },
-                { $push: { posts: { id: postId, title } } }
+                { $push: { posts: { id: postId, title } } },
+                { new: true }
             );
 
             return res.status(201).json({
@@ -75,31 +85,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 error: error.message || 'Failed to create post'
             });
         }
-    }
-
-    // Handle GET request to fetch posts
-    else if (req.method === 'GET') {
+    } else if (req.method === 'GET') {
         try {
             await connectToDatabase();
 
-            const { tag, authorId, limit = 10, page = 1 } = req.query;
+            const { tag, authorId, limit = '10', page = '1' } = req.query;
             const skip = (Number(page) - 1) * Number(limit);
 
-            // Build query based on filters
             const query: any = {};
             if (tag) query.tags = tag;
             if (authorId) query.authorId = authorId;
 
-            // Fetch posts with pagination
-            const posts = await Post.find(query)
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(Number(limit))
-                .exec();
+            // Use the utility function instead of direct mongoose method
+            const posts = await find<IPost>(
+                Post,
+                query,
+                {
+                    sort: { createdAt: -1 },
+                    skip: skip,
+                    limit: Number(limit)
+                }
+            );
 
-            const total = await Post.countDocuments(query);
+            // Use the utility function instead of direct mongoose method
+            const total = await countDocuments(Post, query);
 
-            // Disable caching
             res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
 
             return res.status(200).json({
@@ -120,10 +130,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 error: error.message || 'Failed to fetch posts'
             });
         }
-    }
-
-    // Method not allowed
-    else {
+    } else {
         return res.status(405).json({
             success: false,
             error: 'Method not allowed'

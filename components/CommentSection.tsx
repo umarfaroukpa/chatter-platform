@@ -10,7 +10,7 @@ interface Comment {
     username: string;
     text: string;
     timestamp: string;
-    reactions: { [key: string]: number };
+    reactions: { [key: string]: number } | null | undefined;
 }
 
 interface CommentSectionProps {
@@ -51,27 +51,52 @@ const CommentSection = ({ postId, userId, comments, refreshPost }: CommentSectio
 
         setLoading(true);
         try {
-            await axios.post('/api/comments', {
+            console.log("Sending comment with data:", {
                 postId,
                 comment: {
                     userId: userData._id,
                     username: userData.username || "Anonymous",
-                    text: commentText,
-                    timestamp: new Date().toISOString(),
-                    reactions: {}
+                    text: commentText
                 }
             });
 
+            const response = await axios.post('/api/comments', {
+                postId,
+                comment: {
+                    userId: userData._id,
+                    username: userData.username || "Anonymous",
+                    text: commentText
+                }
+            });
+
+            console.log("Comment posted successfully:", response.data);
             setCommentText("");
             refreshPost();
         } catch (error) {
             console.error("Error posting comment:", error);
-            alert("Failed to post comment. Please try again.");
+            // Type-safe error handling
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    console.error("Error response data:", error.response.data);
+                    console.error("Status code:", error.response.status);
+
+                    const errorMessage = error.response.data?.error || 'Unknown error';
+                    alert(`Failed to post comment: ${errorMessage}`);
+                } else if (error.request) {
+                    console.error("No response received:", error.request);
+                    alert("Failed to post comment: No response from server");
+                } else {
+                    console.error("Error setting up request:", error.message);
+                    alert(`Failed to post comment: ${error.message}`);
+                }
+            } else {
+                console.error("Non-Axios error:", error);
+                alert("Failed to post comment. Please try again.");
+            }
         } finally {
             setLoading(false);
         }
     };
-
     const handleAddReaction = async (commentId: string, emoji: string) => {
         try {
             await axios.post('/api/reactions', {
@@ -111,7 +136,7 @@ const CommentSection = ({ postId, userId, comments, refreshPost }: CommentSectio
                     <button
                         type="submit"
                         disabled={!commentText.trim() || loading}
-                        className={`bg-blue-500 text-white px-4 py-2 rounded-r ${!commentText.trim() || loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'
+                        className={`bg-[#07327a] text-white px-4 py-2 rounded-r ${!commentText.trim() || loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'
                             }`}
                     >
                         {loading ? "Posting..." : "Post"}
@@ -129,7 +154,7 @@ const CommentSection = ({ postId, userId, comments, refreshPost }: CommentSectio
                             <div className="flex justify-between items-start">
                                 <div>
                                     <p className="font-semibold">{comment.username}</p>
-                                    <p className="text-sm text-gray-500">{formatDate(comment.timestamp)}</p>
+                                    <p className="text-sm text-[#787474]">{formatDate(comment.timestamp)}</p>
                                 </div>
                                 <div className="relative">
                                     <button
@@ -137,7 +162,7 @@ const CommentSection = ({ postId, userId, comments, refreshPost }: CommentSectio
                                             setSelectedComment(comment._id);
                                             setShowEmojiPicker(!showEmojiPicker || selectedComment !== comment._id);
                                         }}
-                                        className="text-gray-500 hover:text-gray-700"
+                                        className="text-[#787474] hover:text-gray-700"
                                     >
                                         😀 React
                                     </button>
@@ -152,8 +177,8 @@ const CommentSection = ({ postId, userId, comments, refreshPost }: CommentSectio
 
                             <p className="mt-2">{comment.text}</p>
 
-                            {/* Reactions Display */}
-                            {Object.keys(comment.reactions).length > 0 && (
+                            {/* Reactions Display - Add null/undefined check */}
+                            {comment.reactions && Object.keys(comment.reactions).length > 0 && (
                                 <div className="flex flex-wrap mt-2 gap-2">
                                     {Object.entries(comment.reactions).map(([emoji, count]) => (
                                         <span key={emoji} className="bg-gray-200 px-2 py-1 rounded text-sm">

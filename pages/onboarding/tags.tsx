@@ -9,19 +9,18 @@ const ProgressBar = ({ currentStep }: { currentStep: number }) => {
     const steps = ["SignUp/Login", "About", "Personalize", "Tags"];
 
     return (
-        <div className="fixed top-1/2 left-4 transform -translate-y-1/2">
+        <div className="hidden md:block fixed top-1/2 left-4 transform -translate-y-1/2 z-10">
             {steps.map((step, index) => (
                 <div key={index} className="flex items-center mb-4">
                     <div
                         className={`w-4 h-4 rounded-full ${index <= currentStep ? "bg-[#07327a]" : "bg-[#787474]"}`}
                     ></div>
-                    <span className="ml-2">{step}</span>
+                    <span className="ml-2 text-sm md:text-base">{step}</span>
                 </div>
             ))}
         </div>
     );
 };
-
 
 const TagsSelection = () => {
     const router = useRouter();
@@ -56,10 +55,10 @@ const TagsSelection = () => {
     );
 
     return (
-        <div className="flex flex-col  items-center justify-center  min-h-screen text-right -mt-24">
-            <div className="flex flex-col w-[400px]">
-                <h1 className="text-3xl font-bold">Choose Your Tags</h1>
-                <p className="text-base opacity-90 text-[#787474] text-left mb-6">
+        <div className="flex flex-col items-center justify-start min-h-screen mt-16 md:-mt-24 px-4">
+            <div className="flex flex-col w-full max-w-4xl md:w-[400px]">
+                <h1 className="text-2xl md:text-3xl font-bold text-left mb-4">Choose Your Tags</h1>
+                <p className="text-sm md:text-base opacity-90 text-[#787474] text-left mb-6">
                     We use tags to personalize your feed and make it easier to discover relevant content.
                 </p>
 
@@ -76,71 +75,76 @@ const TagsSelection = () => {
                 </div>
 
                 {/* Tags Layout */}
-                <div className="flex mb-6 space-x-4">
+                <div className="flex flex-col md:flex-row md:space-x-4 space-y-6 text-2xl md:space-y-0 mb-6 w-full">
                     {filteredTags.slice(0, 3).map(({ name, icon: Icon }) => (
                         <button
                             key={name}
                             onClick={() => handleTagSelect(name)}
-                            className={`relative flex items-center  rounded-2xl p-4 w-72 h-28 bg-gray-100 transform transition-transform duration-300 ease-in-out hover:scale-105 
-                        focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a]
-                        ${selectedTags.includes(name) ? 'bg-[#07327a] border-[#07327a] shadow-lg' : ' border-gray-300'}`}
+                            className={`relative flex items-center py-4 md:py-6 px-4 md:px-8 rounded-2xl w-full md:w-72 h-20 md:h-28 bg-gray-100 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                                focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a]
+                                ${selectedTags.includes(name) ? 'bg-[#07327a] border-[#07327a] shadow-lg ' : 'border-gray-300'}`}
                         >
                             <div className="flex items-center">
-                                <Icon size={35} className={`${selectedTags.includes(name) ? '' : ''}`} />
+                                <Icon className={`h-8 w-8 md:h-10 md:w-10 ${selectedTags.includes(name) ? '' : 'text-[#787474]'}`} />
                             </div>
                             <div className="ml-4 flex-grow">
-                                <span>{name}</span>
+                                <span className="text-sm md:text-base">{name}</span>
                             </div>
-                            <div className={`p-2  ml-4 ${selectedTags.includes(name) ? 'border-white' : 'border-gray-300'}`}>
+                            <div className={`p-2 ${selectedTags.includes(name) ? 'border-white' : 'border-gray-300'}`}>
                                 {selectedTags.includes(name) ? (
-                                    <CheckCircle size={24} className="text-green-500" />
+                                    <CheckCircle className="text-green-500 h-5 w-5 md:h-6 md:w-6" />
                                 ) : (
-                                    <PlusCircle size={24} className="text-gray-400" />
+                                    <PlusCircle className="text-gray-400 h-5 w-5 md:h-6 md:w-6" />
                                 )}
                             </div>
                         </button>
                     ))}
                 </div>
 
-                <div className="flex gap-4 mb-6 space-x-4">
+                <div className="flex flex-col md:flex-row md:space-x-4 space-y-6 md:space-y-0 mb-6 w-full">
                     {filteredTags.slice(3).map(({ name, icon: Icon }) => (
                         <button
                             key={name}
                             onClick={() => handleTagSelect(name)}
-                            className={`relative flex items-center py-6 px-8  rounded-2xl p-4 w-72 h-28 bg-gray-100 transform transition-transform duration-300 ease-in-out hover:scale-105 
-                        focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a]
-                        ${selectedTags.includes(name) ? 'bg-[#07327a]  border-[#07327a] shadow-lg' : ' border-gray-300'}`}
+                            className={`relative flex items-center py-4 md:py-6 px-4 md:px-8 rounded-2xl w-full md:w-72 h-20 md:h-28 bg-gray-100 transform transition-transform duration-300 ease-in-out hover:scale-105 
+                                focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-[#07327a]
+                                ${selectedTags.includes(name) ? 'bg-[#07327a] border-[#07327a] shadow-lg ' : 'border-gray-300'}`}
                         >
-                            <div className="flex items-center ">
-                                <Icon size={35} className={`${selectedTags.includes(name) ? '' : ''}`} />
+                            <div className="flex items-center">
+                                <Icon className={`h-8 w-8 md:h-10 md:w-10 ${selectedTags.includes(name) ? '' : 'text-[#787474]'}`} />
                             </div>
                             <div className="ml-4 flex-grow">
-                                <span>{name}</span>
+                                <span className="text-sm md:text-base">{name}</span>
                             </div>
-                            <div className={`p-2 ml-4 ${selectedTags.includes(name) ? 'border-white' : 'border-gray-300'}`}>
+                            <div className={`p-2 ${selectedTags.includes(name) ? 'border-white' : 'border-gray-300'}`}>
                                 {selectedTags.includes(name) ? (
-                                    <CheckCircle size={24} className="text-green-500" />
+                                    <CheckCircle className="text-green-500 h-5 w-5 md:h-6 md:w-6" />
                                 ) : (
-                                    <PlusCircle size={24} className="text-gray-400" />
+                                    <PlusCircle className="text-gray-400 h-5 w-5 md:h-6 md:w-6" />
                                 )}
                             </div>
                         </button>
                     ))}
                 </div>
 
-                <div className="flex space-x-4">
-                    <button className="text-[#787474] py-2 px-6 rounded-lg border-2 border-gray-300 cursor-pointer transform transition-transform duration-300 ease-in-out hover:scale-105 " onClick={() => router.back()}>
+                <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mt-6 w-full justify-center">
+                    <button
+                        className="text-[#787474] py-2 px-6 rounded-lg border-2 border-gray-300 cursor-pointer transform transition-transform duration-300 ease-in-out hover:scale-105 w-full md:w-auto"
+                        onClick={() => router.back()}
+                    >
                         Back
                     </button>
-                    <button className="bg-[#07327a] text-white py-2 px-6 rounded-lg transform transition-transform duration-300 ease-in-out hover:scale-105" onClick={handleNext}>
+                    <button
+                        className="bg-[#07327a] text-white py-2 px-6 rounded-lg transform transition-transform duration-300 ease-in-out hover:scale-105 w-full md:w-auto"
+                        onClick={handleNext}
+                    >
                         Get Started
                     </button>
                 </div>
-
-                <ProgressBar currentStep={3} />
-
             </div>
-        </div >
+
+            <ProgressBar currentStep={3} />
+        </div>
     );
 };
 

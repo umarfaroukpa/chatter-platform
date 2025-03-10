@@ -1,38 +1,47 @@
-// models/User.ts
-import mongoose, { Schema, Document } from 'mongoose';
-import { IPost } from './Post';
-import { IComment } from './Comment';
+import mongoose, { Document, Schema } from 'mongoose';
 
-export interface IUser extends Document {
+export interface IUser {
     uid: string;
-    userType: "reader" | "writer";
+    userType: 'Reader' | 'Writer';
     username?: string;
     phoneNumber?: string;
     email?: string;
-    profilePicUrl?: string;
     tags: string[];
     domain?: string;
-    posts: IPost[];
-    bookmarks: IPost[];
-    comments: IComment[];
-    // For GridFS
+    posts: Array<{ id: string; title: string }>;
+    bookmarks: string[];
+    comments: string[];
     profilePicFileId?: string;
 }
 
+export interface IUserDocument extends IUser, Document {
+    profilePicUrl: string;
+}
+
 const UserSchema: Schema = new Schema({
-    uid: { type: String, required: true },
-    userType: { type: String, required: true },
-    username: { type: String },
-    phoneNumber: { type: String },
-    email: { type: String },
-    profilePicUrl: { type: String },
-    tags: { type: [String], required: true },
+    uid: { type: String, required: true, unique: true },
+    userType: { type: String, enum: ['Reader', 'Writer'], required: true },
+    username: { type: String, default: '' },
+    phoneNumber: { type: String, default: '' },
+    email: { type: String, default: '' },
+    tags: { type: [String], default: [] },
     domain: { type: String },
-    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
-    bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
-    // For GridFS
-    profilePicFileId: { type: String },
+    posts: { type: [{ id: String, title: String }], default: [] },
+    bookmarks: { type: [String], default: [] },
+    comments: { type: [String], default: [] },
+    profilePicFileId: { type: String }
+}, {
+    // Important: Enable virtuals in toObject and toJSON
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
 });
 
-export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+UserSchema.virtual('profilePicUrl').get(function () {
+    if (this.profilePicFileId) {
+        return `/api/files/${this.profilePicFileId}`;
+    }
+    return '';
+});
+
+const User = mongoose.models.User || mongoose.model<IUserDocument>('User', UserSchema);
+export default User;

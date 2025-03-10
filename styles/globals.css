@@ -37,3 +37,9 @@ body {
 .loading-animation {
   animation: loadingAnimation 0.8s ease-in-out infinite;
 }
+
+@media (min-width: 768px) {
+  .hide-on-desktop {
+    display: none !important;
+  }
+}
