@@ -150,9 +150,9 @@ const SubdomainSelection = () => {
 
     return (
         <div className="flex flex-col items-center justify-start md:justify-center min-h-screen mt-16 md:mt-16 px-4">
-            <div className="">
-                <h1 className="text-3xl md:text-4xl font-bold text-left md:text-center">Choose Your Subdomain</h1>
-                <p className="text-lg md:text-lg text-[#787474] mb-8 md:text-center">
+            <div className="mt-16">
+                <h1 className="text-3xl md:text-4xl font-bold ">Choose Your Subdomain</h1>
+                <p className="text-lg md:text-lg text-[#787474] mb-8  md:text-center">
                     This will be the link to your profile (e.g., yourname.chatter.dev).
                 </p>
 
@@ -172,7 +172,7 @@ const SubdomainSelection = () => {
                                 isAvailable === true ? "border-green-500" : "border-gray-300"
                                 }`}
                         />
-                        <span className="bg-gray-200 py-2 px-4 rounded-lg md:rounded-r-lg text-base md:text-lg text-gray-600 mt-2 md:mt-0">
+                        <span className="hidden md:block bg-gray-200 py-2 px-4 rounded-lg md:rounded-r-lg text-base md:text-lg text-gray-600 md:mt-0">
                             .chatter.dev
                         </span>
                     </div>
@@ -183,7 +183,7 @@ const SubdomainSelection = () => {
                 </div>
 
                 {/* Navigation Buttons */}
-                <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 w-full">
+                <div className="flex flex-col mt-8 items-center justify-center md:flex-row space-y-4 md:space-y-0 md:space-x-4 w-full">
                     <button
                         className="text-[#787474] border-2 py-2 px-6 rounded-lg transform transition-transform duration-300 ease-in-out hover:scale-105 w-full md:w-auto"
                         onClick={() => router.push("/onboarding/domain-details")}

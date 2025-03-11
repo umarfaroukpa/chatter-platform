@@ -56,7 +56,7 @@ const TagsSelection = () => {
 
     return (
         <div className="flex flex-col items-center justify-start min-h-screen mt-16 md:-mt-24 px-4">
-            <div className="flex flex-col w-full max-w-4xl md:w-[400px]">
+            <div className="flex flex-col w-full max-w-4xl mt-16 md:w-[400px]">
                 <h1 className="text-2xl md:text-3xl font-bold text-left mb-4">Choose Your Tags</h1>
                 <p className="text-sm md:text-base opacity-90 text-[#787474] text-left mb-6">
                     We use tags to personalize your feed and make it easier to discover relevant content.
@@ -66,7 +66,7 @@ const TagsSelection = () => {
                 <div className="flex items-center border-e-0 relative mb-8 w-60">
                     <input
                         type="text"
-                        className="border border-gray-300  w-full py-3 px-4 pl-10 text-sm  focus:outline-none focus:ring-2 focus:ring-[#07327a]"
+                        className="border border-gray-300  w-  px-4 pl-10 text-sm  focus:outline-none focus:ring-2 focus:ring-[#07327a]"
                         placeholder="Search tags..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}

@@ -84,8 +84,7 @@ const Header = () => {
                         onClick={toggleGuide}
                         className="flex items-center text-sm text-[#273c46] py-2 px-4 hover:text-[#07327a]"
                     >
-                        <HelpCircle className="h-5 w-5 mr-1" />
-                        Need Help?
+                        Need Help ?
                     </button>
 
                     {showGuide && (
