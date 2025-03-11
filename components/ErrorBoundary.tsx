@@ -3,7 +3,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
     children: ReactNode;
-    fallback?: ReactNode; // Optional custom fallback UI
+    fallback?: ReactNode;
 }
 
 interface ErrorBoundaryState {

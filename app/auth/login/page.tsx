@@ -41,7 +41,7 @@ const LoginPageContent = () => {
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            console.log("User signed in:", userCredential.user.uid); // Debug: Log UID
+            console.log("User signed in:", userCredential.user.uid);
             if (rememberMe) {
                 localStorage.setItem("savedEmail", email);
                 localStorage.setItem("savedPassword", password);
@@ -54,7 +54,7 @@ const LoginPageContent = () => {
                 router.push("/dashboard");
             }, 1500);
         } catch (error: any) {
-            console.error("Firebase login error:", error.code, error.message); // Detailed logging
+            console.error("Firebase login error:", error.code, error.message);
             switch (error.code) {
                 case "auth/user-not-found":
                     setError("No user found with this email.");
@@ -78,6 +78,7 @@ const LoginPageContent = () => {
             setIsLoading(false);
         }
     };
+
     const handlePasswordReset = async () => {
         setError(null);
         setSuccessMessage(null);
@@ -95,56 +96,73 @@ const LoginPageContent = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-2xl font-bold mb-4">Login</h1>
-            <form onSubmit={handleLogin} className="bg-gray-100 p-6 rounded-md shadow-md w-80">
-                {error && <p className="text-red-500 mb-4">{error}</p>}
-                {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="mb-4 p-2 border rounded w-full"
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="mb-4 p-2 border rounded w-full"
-                    required
-                />
-                <div className="flex items-center justify-between mb-4">
-                    <label className="flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={rememberMe}
-                            onChange={(e) => setRememberMe(e.target.checked)}
-                            className="mr-2"
-                        />
-                        Remember me
-                    </label>
-                    <button type="button" onClick={handlePasswordReset} className="text-[#07327a]">
-                        Forgot Password?
-                    </button>
-                </div>
-                <button
-                    type="submit"
-                    className="bg-[#07327a] text-white px-4 py-2 rounded w-full"
-                    disabled={isLoading}
+        <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-gray-50">
+            <div className="w-full max-w-md">
+                <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center">Login</h1>
+                <form
+                    onSubmit={handleLogin}
+                    className="bg-white p-6 rounded-lg shadow-lg w-full"
                 >
-                    {isLoading ? <ClipLoader size={20} color={"#fff"} /> : "Login"}
-                </button>
-            </form>
+                    {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
+                    {successMessage && <p className="text-green-500 text-sm mb-4 text-center">{successMessage}</p>}
+
+                    <div className="mb-4">
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#07327a] text-sm md:text-base"
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#07327a] text-sm md:text-base"
+                            required
+                        />
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-2">
+                        <label className="flex items-center text-sm">
+                            <input
+                                type="checkbox"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                                className="mr-2"
+                            />
+                            Remember me
+                        </label>
+                        <button
+                            type="button"
+                            onClick={handlePasswordReset}
+                            className="text-[#07327a] text-sm hover:underline"
+                        >
+                            Forgot Password?
+                        </button>
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-[#07327a] text-white py-3 rounded-md hover:bg-opacity-90 transition-colors disabled:opacity-50 text-sm md:text-base"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? <ClipLoader size={20} color={"#fff"} /> : "Login"}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 };
 
 const LoginPage = () => {
     return (
-        <Suspense fallback={<p>Loading...</p>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p>Loading...</p></div>}>
             <LoginPageContent />
         </Suspense>
     );

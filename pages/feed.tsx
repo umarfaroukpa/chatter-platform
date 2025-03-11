@@ -20,6 +20,7 @@ const FeedPage = () => {
     const [showComments, setShowComments] = useState(null);
     const [techNews, setTechNews] = useState([]);
     const [newsLoading, setNewsLoading] = useState(true);
+    const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -86,14 +87,12 @@ const FeedPage = () => {
     const fetchTechNews = async () => {
         try {
             setNewsLoading(true);
-            // Try to fetch from your API
             const response = await axios.get('/api/update');
             if (response.data.success) {
                 setTechNews(response.data.articles);
             }
         } catch (error) {
             console.error("Error fetching tech news:", error);
-            // Use fallback data if API is not available yet
             console.log("Using fallback tech news data");
             setTechNews([
                 { id: 1, title: "New AI Model Released by Anthropic", url: "#", source: "Tech Crunch" },
@@ -106,6 +105,7 @@ const FeedPage = () => {
             setNewsLoading(false);
         }
     };
+
     const handleLike = async (postId) => {
         try {
             await axios.post(`/api/likes`, { postId, userId: user.uid });
@@ -147,7 +147,7 @@ const FeedPage = () => {
                             setError(null);
                             fetchPosts();
                         }}
-                        className=" text-[#787474] py-2 px-4 rounded border border-[#787474] hover:bg-[#07327a] hover:text-white transition"
+                        className="text-[#787474] py-2 px-4 rounded border border-[#787474] hover:bg-[#07327a] hover:text-white transition"
                     >
                         Try Again
                     </button>
@@ -157,9 +157,9 @@ const FeedPage = () => {
     }
 
     return (
-        <div className="flex min-h-screen">
+        <div className="flex  md:flex-row min-h-screen">
             {/* Left Sidebar */}
-            <aside className="md:w-64 w-64 bg-gray-100 p-6 md:min-h-screen hidden md:block">
+            <aside className="md:w-64 bg-gray-100 p-6 md:min-h-screen hidden md:block">
                 <div className="mb-8 flex flex-col items-start">
                     {user && !loading ? (
                         <>
@@ -208,7 +208,7 @@ const FeedPage = () => {
                 {profileData?.userType === "Writer" && (
                     <div className="mb-8">
                         <Link href="/dashboard/createpost">
-                            <p className="block  text-[#787474] border border-[#787474] py-2 px-4 rounded text-center hover:bg-[#07327a] hover:text-white transition">Create Post</p>
+                            <p className="block text-[#787474] border border-[#787474] py-2 px-4 rounded text-center hover:bg-[#07327a] hover:text-white transition">Create Post</p>
                         </Link>
                     </div>
                 )}
@@ -220,22 +220,95 @@ const FeedPage = () => {
                     Log Out
                 </button>
             </aside>
-            {/* Mobile navigation drawer button */}
-            <div className="block fixed top-4 left-4 z-30 sm:block md:hidden hide-on-desktop">
-                <button className="bg-[#07327a] text-white p-2 rounded-full shadow">
+
+            {/* Mobile Navigation Drawer Button */}
+            <div className="block fixed top-4 left-4 z-30 md:hidden">
+                <button
+                    onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
+                    className="bg-[#07327a] text-white p-2 rounded-full shadow"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
             </div>
 
+            {/* Mobile Drawer (empty content) */}
+            {/* Mobile Drawer */}
+            {isMobileDrawerOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden">
+                    <div className="absolute top-0 left-0 w-64 h-full bg-gray-100 p-6">
+                        {/* Sidebar Content */}
+                        <div className="mb-8 flex flex-col items-start">
+                            {user && !loading ? (
+                                <>
+                                    <img
+                                        src={getProfilePicUrl()}
+                                        alt="Profile"
+                                        className="w-6 h-6 rounded-full mb-2 object-cover"
+                                        key={profileData?.profilePicFileId}
+                                    />
+                                    <p className="mb-2 font-medium">{profileData?.username || user.email}</p>
+                                    <Link href="/dashboard/profilesetup">
+                                        <p className="text-[#787474] underline font-bold">Profile Setup</p>
+                                    </Link>
+                                </>
+                            ) : (
+                                <div className="animate-pulse flex flex-col items-center">
+                                    <div className="w-16 h-16 bg-gray-300 rounded-full mb-2"></div>
+                                    <div className="h-4 bg-gray-300 rounded w-24 mb-2"></div>
+                                    <div className="h-4 bg-gray-300 rounded w-20"></div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="mb-8">
+                            <h2 className="text-xl text-[#787474] font-bold mb-4">Explore</h2>
+                            <ul>
+                                <li className="mb-2">
+                                    <Link href="/feed">
+                                        <p className="text-[#787474] hover:underline">All Posts</p>
+                                    </Link>
+                                </li>
+                                <li className="mb-2">
+                                    <a href="#" className="text-[#787474] hover:underline">Trending</a>
+                                </li>
+                                <li className="mb-2">
+                                    <a href="#" className="text-[#787474] hover:underline">Categories</a>
+                                </li>
+                                <li className="mb-2">
+                                    <Link href="/dashboard/bookmarks">
+                                        <p className="text-[#787474] hover:underline">Bookmarks</p>
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {profileData?.userType === "Writer" && (
+                            <div className="mb-8">
+                                <Link href="/dashboard/createpost">
+                                    <p className="block text-[#787474] border border-[#787474] py-2 px-4 rounded text-center hover:bg-[#07327a] hover:text-white transition">Create Post</p>
+                                </Link>
+                            </div>
+                        )}
+
+                        <button
+                            onClick={() => auth.signOut()}
+                            className="w-full mt-8 py-2 px-4 text-center border border-[#787474] text-[#787474] rounded hover:bg-[#07327a] hover:text-white transition"
+                        >
+                            Log Out
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Main Feed */}
             <main className="flex-1 p-6 md:px-10">
                 <div className="max-w-5xl mx-auto">
                     <div className="flex justify-between items-center mb-6">
                         {profileData?.userType === "Writer" && (
-                            <Link href="/dashboard/createpost" className="md:hidden">
-
+                            <Link href="/dashboard/createpost" className="md:hidden block text-[#787474] border border-[#787474] py-2 px-4 rounded hover:bg-[#07327a] hover:text-white transition">
+                                Create Post
                             </Link>
                         )}
                     </div>
@@ -283,7 +356,7 @@ const FeedPage = () => {
                                 <p className="text-xl text-[#787474]">No posts found matching "{searchTerm}"</p>
                             ) : (
                                 <>
-                                    <p className="text-xl text-[]#787474">No posts yet.</p>
+                                    <p className="text-xl text-[#787474]">No posts yet.</p>
                                     {profileData?.userType === "Writer" && (
                                         <Link href="/dashboard/createpost">
                                             <p className="mt-4 text-[#787474] hover:underline">Create your first post</p>
@@ -296,9 +369,9 @@ const FeedPage = () => {
                         <div className="grid grid-cols-1 gap-8">
                             {filteredPosts.map((post) => (
                                 <div key={post._id} className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
-                                    <div className="flex justify-between items-start mb-4">
+                                    <div className="flex justify-between items-start mb-4 flex-col md:flex-row">
                                         <h2 className="text-2xl font-semibold">{post.title}</h2>
-                                        <span className="text-sm text-[#787474]">
+                                        <span className="text-sm text-[#787474] mt-2 md:mt-0">
                                             {new Date(post.createdAt).toLocaleDateString()}
                                         </span>
                                     </div>
@@ -326,7 +399,7 @@ const FeedPage = () => {
                                         </button>
                                     )}
 
-                                    <div className="flex items-center space-x-4 border-t pt-4">
+                                    <div className="flex items-center space-x-4 border-t pt-4 flex-wrap gap-4 md:gap-0">
                                         <button
                                             onClick={() => handleLike(post._id)}
                                             className={`inline-flex items-center p-1 rounded-full ${post.likes?.includes(user?.uid) ? 'text-[#787474]' : 'text-[#07327a]'
@@ -411,8 +484,8 @@ const FeedPage = () => {
                 </div>
             </main>
 
-            {/* Right Sidebar - Tech News - FIXED VERSION */}
-            <aside className="w-80 bg-gray-50 p-6 border-l border-gray-200 md:block">
+            {/* Right Sidebar - Tech News */}
+            <aside className=" w-80 bg-gray-50 p-6 border-l border-gray-200 md:block hidden md:visible">
                 <h2 className="text-xl font-bold mb-6 text-[#07327a]">Updates</h2>
 
                 {newsLoading ? (
@@ -445,18 +518,28 @@ const FeedPage = () => {
                 <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
                     <h3 className="font-medium text-[#787474] mb-2">Stay Updated</h3>
                     <p className="text-sm text-[#07327a] mb-3">Never miss the latest in tech and development. Subscribe to our weekly newsletter.</p>
-                    <div className="flex">
+                    <div className="flex flex-col md:flex-row">
                         <input
                             type="email"
                             placeholder="Your email"
-                            className="flex-1 px-3 py-2 text-sm border rounded-l-md focus:outline-none focus:ring-1 focus:ring-[#787474]"
+                            className="flex-1 px-3 py-2 text-sm border rounded-t-md md:rounded-l-md md:rounded-t-none focus:outline-none focus:ring-1 focus:ring-[#787474] mb-2 md:mb-0"
                         />
-                        <button className="bg-[#07327a] text-white px-3 py-2 text-sm rounded-r-md hover:bg-[#787474]">
+                        <button className="bg-[#07327a] text-white px-3 py-2 text-sm rounded-b-md md:rounded-r-md md:rounded-b-none hover:bg-[#787474]">
                             Subscribe
                         </button>
                     </div>
                 </div>
             </aside>
+
+            {/* Mobile-specific CSS */}
+            <style jsx>{`
+                @media (max-width: 767px) {
+                    .flex.justify-between.items-center.mb-6 {
+                        flex-direction: row-reverse;
+                    }
+                }
+            `}</style>
+
         </div>
     );
 };
