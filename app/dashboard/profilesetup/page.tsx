@@ -105,7 +105,7 @@ const ProfilePage = () => {
                             setError('Failed to fetch user data: ' + result.error);
                         }
                     }
-                } catch (error: any) {
+                } catch (error: unknown) {
                     setError('Failed to load user data. Please try again.');
                 } finally {
                     setLoading(false);
@@ -152,8 +152,8 @@ const ProfilePage = () => {
                     setEditing(false);
                     await fetchUserData();
                 }
-            } catch (error: any) {
-                console.error('Error updating profile:', error.response?.data || error.message);
+            } catch (error: unknown) {
+                console.error('Error updating profile:', error instanceof Error ? error.message : 'unknwon error');
             }
         }
     };
@@ -177,8 +177,8 @@ const ProfilePage = () => {
                     setUserData({ ...userData, profilePicUrl });
                     await handleProfileUpdate();
                 }
-            } catch (error: any) {
-                console.error('Error uploading file:', error.response?.data || error.message);
+            } catch (error: unknown) {
+                console.error('Error uploading file:', error instanceof Error ? error.message : 'unknwon error');
             }
         }
     };

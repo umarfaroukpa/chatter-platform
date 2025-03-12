@@ -45,7 +45,7 @@ const CustomDomain = () => {
                 setIsValidHost(false);
                 setErrorMessage(data.message);
             }
-        } catch (error) {
+        } catch {
             setIsValidHost(false);
             setErrorMessage("An error occurred while checking the subdomain.");
         }

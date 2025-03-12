@@ -33,7 +33,7 @@ const LoginPageContent = () => {
         }
     }, []);
 
-    const handleLogin = async (e) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
         setSuccessMessage(null);
@@ -53,8 +53,8 @@ const LoginPageContent = () => {
             setTimeout(() => {
                 router.push("/dashboard");
             }, 1500);
-        } catch (error: any) {
-            console.error("Firebase login error:", error.code, error.message);
+        } catch (error: Error | any) {
+            console.error("Firebase login error:", error.code || error.response?.status, error.message || error);
             switch (error.code) {
                 case "auth/user-not-found":
                     setError("No user found with this email.");
@@ -89,8 +89,8 @@ const LoginPageContent = () => {
         try {
             await sendPasswordResetEmail(auth, email);
             setSuccessMessage("Password reset email sent successfully.");
-        } catch (error: any) {
-            console.error("Password reset error:", error.code, error.message);
+        } catch (error: Error | any) {
+            console.error("Password reset error:", error.code || error.response?.status, error.message || error);
             setError(`Failed to send password reset email: ${error.message}`);
         }
     };

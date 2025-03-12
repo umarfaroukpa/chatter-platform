@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import Image from 'next/image';
 
 // Emoji picker component
 const EmojiPicker = ({ onSelectEmoji, onClose }) => {
@@ -29,14 +30,14 @@ const EmojiPicker = ({ onSelectEmoji, onClose }) => {
 
 // Individual comment component
 const CommentItem = ({ comment, currentUserId, onLike, onReply }) => {
-    const { id, userId, text, timestamp, author, profilePic, likes = [], replies = [] } = comment;
+    const { id, text, timestamp, author, profilePic, likes = [], replies = [] } = comment;
     const formattedTime = timestamp ? formatDistanceToNow(new Date(timestamp), { addSuffix: true }) : 'just now';
     const isLiked = likes.includes(currentUserId);
 
     return (
         <div className="comment-item mb-4">
             <div className="flex items-start space-x-3">
-                <img
+                <Image
                     src={profilePic || "/default-avatar.png"}
                     alt={author || 'User'}
                     className="w-8 h-8 rounded-full object-cover"
@@ -100,7 +101,7 @@ const CommentInput = ({ postId, onCommentAdded, parentCommentId = null, placehol
         try {
             setIsSubmitting(true);
 
-            // Replace with your actual API endpoint
+
             const response = await fetch('/api/comments', {
                 method: 'POST',
                 headers: {
@@ -180,8 +181,8 @@ const CommentInput = ({ postId, onCommentAdded, parentCommentId = null, placehol
                         type="submit"
                         disabled={!commentText.trim() || isSubmitting}
                         className={`px-3 py-1 rounded text-sm font-medium ${!commentText.trim() || isSubmitting
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-blue-500 text-white hover:bg-blue-600'
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-blue-500 text-white hover:bg-blue-600'
                             }`}
                     >
                         {isSubmitting ? 'Posting...' : 'Post'}
@@ -197,7 +198,7 @@ export default function CommentsSection({ postId, initialComments = [] }) {
     const [comments, setComments] = useState(initialComments);
     const [loading, setLoading] = useState(false);
     const [replyingTo, setReplyingTo] = useState(null);
-    const currentUserId = 'current-user-id'; // Replace with actual user ID from auth
+    const currentUserId = 'current-user-id';
 
     const handleCommentAdded = (newComment) => {
         setComments(prevComments => [newComment, ...prevComments]);
@@ -216,7 +217,7 @@ export default function CommentsSection({ postId, initialComments = [] }) {
 
     const handleLike = async (commentId) => {
         try {
-            // Replace with your actual API endpoint
+
             const response = await fetch(`/api/comments/${commentId}/like`, {
                 method: 'POST',
             });

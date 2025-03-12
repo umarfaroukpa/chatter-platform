@@ -76,7 +76,7 @@ const RegisterPageContent = () => {
             setTimeout(() => {
                 router.push("/dashboard");
             }, 1500);
-        } catch (error: any) {
+        } catch (error: Error | any) {
             console.error("Registration error:", error.code || error.response?.status, error.message || error);
             if (error.code === "auth/weak-password") {
                 setError("Password should be at least 6 characters.");

@@ -16,14 +16,6 @@ const Header = () => {
     const router = useRouter();
     const pathname = usePathname();
 
-    if (!pathname) {
-        return null;
-    }
-
-    const normalizedPathname = pathname.toLowerCase();
-    const excludedPaths = ["/", "/auth/login", "/auth/register", "/dashboard/profilesetup", "/resetpassword", "/feed"];
-    const isExcludedPage = excludedPaths.includes(normalizedPathname);
-
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (authUser) => {
             if (authUser) {
@@ -35,6 +27,15 @@ const Header = () => {
 
         return () => unsubscribe();
     }, []);
+
+    if (!pathname) {
+        return null;
+    }
+
+    const normalizedPathname = pathname.toLowerCase();
+    const excludedPaths = ["/", "/auth/login", "/auth/register", "/dashboard/profilesetup", "/resetpassword", "/feed"];
+    const isExcludedPage = excludedPaths.includes(normalizedPathname);
+
 
     const handleLogout = async () => {
         try {

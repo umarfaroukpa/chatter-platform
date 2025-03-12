@@ -1,4 +1,3 @@
-import { MongoClient } from 'mongodb';
 import admin from 'firebase-admin';
 import { initAdmin } from '../../lib/firebaseAdmin';
 

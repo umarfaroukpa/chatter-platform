@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { auth } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import axios from "axios";
+import Image from "next/image";
 import CommentSection from "../components/CommentSection";
 
 const FeedPage = () => {
@@ -163,12 +164,15 @@ const FeedPage = () => {
                 <div className="mb-8 flex flex-col items-start">
                     {user && !loading ? (
                         <>
-                            <img
+                            <Image
                                 src={getProfilePicUrl()}
                                 alt="Profile"
-                                className="w-6 h-6 rounded-full mb-2 object-cover"
+                                width={6}
+                                height={6}
+                                className="rounded-full mb-2 object-cover"
                                 key={profileData?.profilePicFileId}
                             />
+
                             <p className="mb-2 font-medium">{profileData?.username || user.email}</p>
                             <Link href="/dashboard/profilesetup">
                                 <p className="text-[#787474] underline font-bold">Profile Setup</p>
@@ -242,10 +246,12 @@ const FeedPage = () => {
                         <div className="mb-8 flex flex-col items-start">
                             {user && !loading ? (
                                 <>
-                                    <img
+                                    <Image
                                         src={getProfilePicUrl()}
                                         alt="Profile"
-                                        className="w-6 h-6 rounded-full mb-2 object-cover"
+                                        width={6}
+                                        height={6}
+                                        className="rounded-full mb-2 object-cover"
                                         key={profileData?.profilePicFileId}
                                     />
                                     <p className="mb-2 font-medium">{profileData?.username || user.email}</p>
@@ -353,7 +359,8 @@ const FeedPage = () => {
                     ) : filteredPosts.length === 0 ? (
                         <div className="text-center py-10">
                             {searchTerm ? (
-                                <p className="text-xl text-[#787474]">No posts found matching "{searchTerm}"</p>
+                                <p className="text-xl text-[#787474]">No posts found matching \"{searchTerm}\"</p>
+
                             ) : (
                                 <>
                                     <p className="text-xl text-[#787474]">No posts yet.</p>

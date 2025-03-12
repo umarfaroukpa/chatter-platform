@@ -52,8 +52,8 @@ export default function Home() {
       } else {
         router.push(`/auth/register?email=${cleanedEmail}`);
       }
-    } catch (error: any) {
-      console.error("Error checking email:", error.message);
+    } catch (error: unknown) {
+      console.error("Error checking email:", error instanceof Error ? error.message : 'unknown error');
     } finally {
       setIsLoading(false);
     }
@@ -64,8 +64,8 @@ export default function Home() {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       alert("Logged in with Google!");
-    } catch (error: any) {
-      console.error("Google login error:", error.message);
+    } catch (error: unknown) {
+      console.error("Google login error:", error instanceof Error ? error.message : 'unknown error');
     }
   };
 
@@ -74,8 +74,8 @@ export default function Home() {
       const provider = new FacebookAuthProvider();
       await signInWithPopup(auth, provider);
       alert("Logged in with Facebook!");
-    } catch (error: any) {
-      console.error("Facebook login error:", error.message);
+    } catch (error: unknown) {
+      console.error("Facebook login error:", error instanceof Error ? error.message : 'unknown error');
     }
   };
 
@@ -84,8 +84,8 @@ export default function Home() {
       const provider = new TwitterAuthProvider();
       await signInWithPopup(auth, provider);
       alert("Logged in with Twitter!");
-    } catch (error: any) {
-      console.error("Twitter login error:", error.message);
+    } catch (error: unknown) {
+      console.error("Twitter login error:", error instanceof Error ? error.message : 'unknown error');
     }
   };
 
@@ -94,8 +94,8 @@ export default function Home() {
       const provider = new GithubAuthProvider();
       await signInWithPopup(auth, provider);
       alert("Logged in with Github!");
-    } catch (error: any) {
-      console.error("Github login error:", error.message);
+    } catch (error: unknown) {
+      console.error("Github login error:", error instanceof Error ? error.message : 'unknown error');
     }
   };
 

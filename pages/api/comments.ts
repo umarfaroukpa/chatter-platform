@@ -7,11 +7,11 @@ import { findOne, findById, findByIdAndUpdate, findOneAndUpdate } from '../../li
 // Updated interface to include debug and details fields
 interface CommentResponse {
     success: boolean;
-    data?: any;
+    data?: Comment;
     error?: string;
     commentCount?: number;
-    debug?: any;  // For development debugging
-    details?: any; // For detailed error information
+    debug?: unknown;
+    details?: unknown;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<CommentResponse>) {
@@ -105,8 +105,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             data: newComment,
             commentCount: updatedPost?.comments.length
         });
-    } catch (error: any) {
-        console.error('Error adding comment:', error);
+    } catch (error: Error | any) {
+        console.error('Error adding comment:', error.message || error);
         // More detailed error information
         const errorDetails = {
             message: error.message,

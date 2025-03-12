@@ -22,11 +22,10 @@ export default function RichTextEditor({ value = '', onChange }) {
     const textareaRef = useRef(null);
 
     useEffect(() => {
-        // Update content if value prop changes (controlled component)
         if (value !== content) {
             setContent(value);
         }
-    }, [value]);
+    }, [value, content]);
 
     const handleContentChange = (e) => {
         const newContent = e.target.value;

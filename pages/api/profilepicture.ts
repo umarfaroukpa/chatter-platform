@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const downloadStream = bucket.openDownloadStream(new ObjectId(user.profilePicFileId));
         res.setHeader('Content-Type', 'image/jpeg'); // Adjust MIME type dynamically if possible
         downloadStream.pipe(res);
-    } catch (error: any) {
+    } catch (error: Error) {
         console.error('Error retrieving file from MongoDB:', error);
         res.status(500).json({ success: false, error: error.message });
     }

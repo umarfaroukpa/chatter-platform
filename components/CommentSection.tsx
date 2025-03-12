@@ -20,9 +20,14 @@ interface CommentSectionProps {
     refreshPost: () => void;
 }
 
-const CommentSection = ({ postId, userId, comments, refreshPost }: CommentSectionProps) => {
+interface UserData {
+    _id: string;
+    username?: string;
+}
+
+const CommentSection = ({ postId, comments, refreshPost }: CommentSectionProps) => {
     const [commentText, setCommentText] = useState("");
-    const [userData, setUserData] = useState<any>(null);
+    const [userData, setUserData] = useState<UserData | null>(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [selectedComment, setSelectedComment] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);

@@ -7,7 +7,7 @@ import { findOne, findOneAndUpdate, find, countDocuments } from '../../lib/mongo
 
 interface ApiResponse {
     success: boolean;
-    data?: any;
+    data?: PostData | PostData[];
     error?: string;
     pagination?: {
         total: number;
@@ -123,7 +123,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 }
             });
 
-        } catch (error: any) {
+        } catch (error: Error) {
             console.error('Error fetching posts:', error);
             return res.status(500).json({
                 success: false,

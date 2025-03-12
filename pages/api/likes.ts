@@ -8,7 +8,7 @@ type Post = {
     content: string;
     author: string;
     likes: string[];
-    comments?: any[];
+    comments?: { userId: string; text: string }[];
     createdAt: Date;
 };
 

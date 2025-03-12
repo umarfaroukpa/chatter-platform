@@ -5,7 +5,7 @@ import { findOne } from '../../lib/mongoose-utils';
 
 interface ApiResponse {
   success: boolean;
-  data?: any;
+  data?: UserResponseData;
   error?: string;
 }
 
@@ -35,13 +35,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     const profilePicUrl = user.profilePicFileId
       ? `/api/files/${user.profilePicFileId}`
-      : '';
+      : user.profilePicUrl || '';
 
     res.status(200).json({
       success: true,
       data: { ...userData, profilePicUrl: user.profilePicUrl || '' }
     });
-  } catch (error: any) {
+  } catch (error: Error) {
     console.error('Error fetching user:', error.message || error);
     res.status(500).json({
       success: false,

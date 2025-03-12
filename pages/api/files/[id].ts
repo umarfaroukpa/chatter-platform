@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const downloadStream = bucket.openDownloadStream(new ObjectId(id));
         downloadStream.pipe(res);
 
-    } catch (error: any) {
+    } catch (error: Error | any) {
         console.error('Error retrieving file:', error.message || error);
         res.status(500).json({ success: false, error: 'Failed to retrieve file' });
     }

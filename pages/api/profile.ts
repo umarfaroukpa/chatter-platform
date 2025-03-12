@@ -47,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             return res.status(500).json({ success: false, error: 'Failed to update user' });
         }
         res.status(200).json({ success: true, data: updatedUser.toObject() });
-    } catch (error: any) {
+    } catch (error: Error) {
         console.error('Error updating profile:', error);
         res.status(400).json({ success: false, error: error.message });
     }

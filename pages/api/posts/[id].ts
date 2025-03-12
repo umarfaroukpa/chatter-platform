@@ -44,11 +44,9 @@ export default async function handler(req, res) {
             message: 'Post retrieved successfully'
         });
     } catch (error) {
-        console.error('Error retrieving post:', error);
         return res.status(500).json({
             success: false,
             message: 'Failed to retrieve post',
-            error: error.toString()
         });
     } finally {
         if (client) await client.close();

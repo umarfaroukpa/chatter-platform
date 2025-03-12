@@ -4,7 +4,7 @@ import nextConnect from 'next-connect';
 import multer from 'multer';
 import fs from 'fs/promises';
 import { GridFSBucket } from 'mongodb';
-import connectToDatabase from '../../lib/mongodb'; // Ensure this connects via Mongoose
+import connectToDatabase from '../../lib/mongodb';
 
 const upload = multer({ dest: '/tmp' });
 
@@ -59,7 +59,7 @@ apiRoute.post(async (req: any, res: NextApiResponse) => {
         await fs.unlink(file.path);
 
         res.status(200).json({ success: true, fileId: fileId.toString() });
-    } catch (error: any) {
+    } catch (error: Error) {
         console.error('Error uploading file to MongoDB:', error.message || error);
         res.status(500).json({ success: false, error: error.message || 'Internal server error' });
     }
@@ -67,7 +67,7 @@ apiRoute.post(async (req: any, res: NextApiResponse) => {
 
 export const config = {
     api: {
-        bodyParser: false, // Multer handles body parsing
+        bodyParser: false,
     },
 };
 

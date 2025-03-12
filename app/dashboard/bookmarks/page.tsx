@@ -82,13 +82,14 @@ export default function BookmarksPage() {
                 postId
             });
 
-            // Update state to remove the bookmark
             setBookmarks(prev => prev.filter(bookmark => bookmark._id !== postId));
-        } catch (err: any) {
-            console.error("Error removing bookmark:", err);
-            alert(err.response?.data?.message || err.message || "Failed to remove bookmark");
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : "Failed to remove bookmark";
+            console.error("Error removing bookmark:", error);
+            alert(errorMessage);
         }
     };
+
 
     const formatDate = (dateString: string) => {
         try {
