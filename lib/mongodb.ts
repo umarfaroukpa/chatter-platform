@@ -7,10 +7,24 @@ if (!MONGODB_URI) {
     throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
 }
 
-let cached = (global as { mongoose?: { conn: Mongoose | null; promise: Promise<Mongoose> | null } }).mongoose;
+//  I use module-level variables instead of namespace
+interface MongooseCache {
+    conn: Mongoose | null;
+    promise: Promise<Mongoose> | null;
+}
 
-if (!cached) {
-    cached = (global as any).mongoose = { conn: null, promise: null };
+// this is define in global scope 
+const globalMongoose = global as unknown as {
+    mongoose: MongooseCache | undefined;
+};
+
+const cached: MongooseCache = globalMongoose.mongoose || {
+    conn: null,
+    promise: null
+};
+
+if (!globalMongoose.mongoose) {
+    globalMongoose.mongoose = cached;
 }
 
 async function connectToDatabase(): Promise<Mongoose> {

@@ -57,9 +57,10 @@ export default function BookmarksPage() {
                     console.error("API returned error:", response.data.message);
                     setError(response.data.message || "Failed to load bookmarks");
                 }
-            } catch (err: any) {
-                console.error("Error fetching bookmarks:", err);
-                setError(err.response?.data?.message || err.message || "An error occurred while fetching bookmarks");
+            } catch (error: unknown) {
+                console.error("Error fetching bookmarks:", error);
+                const errorMessage = error instanceof Error ? error.message : "Failed to remove bookmark";
+                alert(errorMessage);
             } finally {
                 setLoading(false);
             }
@@ -95,7 +96,7 @@ export default function BookmarksPage() {
         try {
             const date = new Date(dateString);
             return date.toLocaleDateString();
-        } catch (err) {
+        } catch {
             return "Unknown date";
         }
     };
@@ -136,7 +137,7 @@ export default function BookmarksPage() {
                 {bookmarks.length === 0 ? (
                     <div className="bg-white p-8 rounded-lg shadow-md text-center">
                         <h2 className="text-xl text-[#787474] mb-4">No bookmarks found</h2>
-                        <p className="text-[#787474] mb-6">You haven't bookmarked any posts yet.</p>
+                        <p className="text-[#787474] mb-6">haven&apos;t bookmarked any posts yet.</p>
                         <Link href="/feed">
                             <span className="bg-[#07327a] text-white px-6 py-2 rounded hover:bg-[#787474] transition">
                                 Browse Posts

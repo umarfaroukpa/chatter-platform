@@ -3,10 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Image from "next/image";
 import Link from "next/link";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../lib/firebase";
 
+// Adjusted UserData to match actual backend data
 interface UserData {
     username: string;
     userType: string;
@@ -15,50 +17,34 @@ interface UserData {
     profilePicUrl?: string;
     tags: string[];
     posts: { id: string; title: string; content: string }[];
-    bookmarks: { id: string; title: string }[];
+    bookmarks: string[]; // Changed to string[] to match User model
     comments: { id: string; text: string }[];
 }
 
 const Sidebar = ({ onTabChange, activeTab, isOpen, toggleSidebar }: { onTabChange: (tab: string) => void; activeTab: string; isOpen: boolean; toggleSidebar: () => void }) => {
     return (
         <div
-            className={`bg-gray-300 text-white fixed inset-y-0 left-0 w-64 transition-transform duration-300 z-20 md:static md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
-                }`}
+            className={`bg-gray-300 text-white fixed inset-y-0 left-0 w-64 transition-transform duration-300 z-20 md:static md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
         >
             <div className="flex flex-col text-[#787474] pl-4 pt-4">
                 <h3 className="text-lg font-semibold">Account</h3>
                 <h6 className="text-sm opacity-70">Manage Your Account Info</h6>
             </div>
             <div className="flex flex-col text-[#787474] mt-6">
-                <button
-                    onClick={() => onTabChange("profile")}
-                    className={`w-full text-left py-3 px-4 ${activeTab === "profile" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}
-                >
+                <button onClick={() => onTabChange("profile")} className={`w-full text-left py-3 px-4 ${activeTab === "profile" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>
                     My Profile
                 </button>
-                <button
-                    onClick={() => onTabChange("posts")}
-                    className={`w-full text-left py-3 px-4 ${activeTab === "posts" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}
-                >
+                <button onClick={() => onTabChange("posts")} className={`w-full text-left py-3 px-4 ${activeTab === "posts" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>
                     My Posts
                 </button>
-                <button
-                    onClick={() => onTabChange("bookmarks")}
-                    className={`w-full text-left py-3 px-4 ${activeTab === "bookmarks" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}
-                >
+                <button onClick={() => onTabChange("bookmarks")} className={`w-full text-left py-3 px-4 ${activeTab === "bookmarks" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>
                     Bookmarks
                 </button>
-                <button
-                    onClick={() => onTabChange("comments")}
-                    className={`w-full text-left py-3 px-4 ${activeTab === "comments" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}
-                >
+                <button onClick={() => onTabChange("comments")} className={`w-full text-left py-3 px-4 ${activeTab === "comments" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>
                     Comments
                 </button>
             </div>
-            <button
-                onClick={toggleSidebar}
-                className="md:hidden absolute top-4 right-4 text-[#787474] hover:text-[#07327a]"
-            >
+            <button onClick={toggleSidebar} className="md:hidden absolute top-4 right-4 text-[#787474] hover:text-[#07327a]">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -87,8 +73,7 @@ const ProfilePage = () => {
                         setUserData(result.data);
                     } else {
                         if (result.error === 'User not found') {
-                            const defaultData = {
-                                uid: user.uid,
+                            const defaultData: UserData = {
                                 username: "Default User",
                                 userType: "unknown",
                                 email: user.email || "",
@@ -106,7 +91,9 @@ const ProfilePage = () => {
                         }
                     }
                 } catch (error: unknown) {
-                    setError('Failed to load user data. Please try again.');
+                    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+                    console.error('Error fetching user data:', errorMessage);
+                    setError(errorMessage);
                 } finally {
                     setLoading(false);
                 }
@@ -153,7 +140,7 @@ const ProfilePage = () => {
                     await fetchUserData();
                 }
             } catch (error: unknown) {
-                console.error('Error updating profile:', error instanceof Error ? error.message : 'unknwon error');
+                console.error('Error updating profile:', error instanceof Error ? error.message : 'unknown error');
             }
         }
     };
@@ -161,7 +148,7 @@ const ProfilePage = () => {
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            const MAX_FILE_SIZE = 100 * 1024; // 100 KB
+            const MAX_FILE_SIZE = 100 * 1024;
             if (file.size > MAX_FILE_SIZE) {
                 alert('File too large! Maximum size allowed is 100 KB.');
                 return;
@@ -178,7 +165,7 @@ const ProfilePage = () => {
                     await handleProfileUpdate();
                 }
             } catch (error: unknown) {
-                console.error('Error uploading file:', error instanceof Error ? error.message : 'unknwon error');
+                console.error('Error uploading file:', error instanceof Error ? error.message : 'unknown error');
             }
         }
     };
@@ -193,7 +180,8 @@ const ProfilePage = () => {
 
     return (
         <div className="flex flex-col min-h-screen md:flex-row relative">
-            {/* Mobile Sidebar Toggle Button */}
+            {error && <p className="text-red-500">Error: {error}</p>}
+
             <button
                 onClick={toggleSidebar}
                 className="md:hidden fixed top-4 left-4 z-30 bg-[#07327a] text-white p-2 rounded-full shadow hover:bg-[#787474]"
@@ -203,36 +191,40 @@ const ProfilePage = () => {
                 </svg>
             </button>
 
-            {/* Sidebar */}
             <Sidebar onTabChange={handleTabChange} activeTab={activeTab} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
-            {/* Overlay for Mobile Sidebar */}
             {isSidebarOpen && (
-                <div
-                    className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-10"
-                    onClick={toggleSidebar}
-                ></div>
+                <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-10" onClick={toggleSidebar}></div>
             )}
 
-            {/* Main Content */}
             <div className="flex-1 p-6 md:p-8 md:ml-64">
                 {activeTab === "profile" && (
                     <div className="profile-page">
                         <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-6 md:gap-0 mb-8">
-                            {/* Left: Profile Details and Labels */}
                             <div className="flex-1 -ml-48 text-start md:text-left">
                                 <h1 className="text-3xl md:text-4xl font-bold mb-8 md:mb-20 text-[#07327a]">Profile Details</h1>
                                 <h3 className="text-base md:text-lg font-semibold mb-4 text-gray-700">User</h3>
                                 <h3 className="text-base md:text-lg font-semibold mb-4 text-gray-700">+Phone Number</h3>
                                 <h3 className="text-base md:text-lg font-semibold text-gray-700">+Email</h3>
                             </div>
-                            {/* Center: Profile Pic and Outputted Values */}
                             <div className="flex-1 flex flex-col items-center">
                                 <div className="profile-image bg-gray-200 w-20 h-20 md:w-24 md:h-24 rounded-full mb-4 flex items-center justify-center overflow-hidden">
                                     {newProfilePic ? (
-                                        <img src={URL.createObjectURL(newProfilePic)} alt="Profile Preview" className="w-full h-full object-cover" />
+                                        <Image
+                                            src={URL.createObjectURL(newProfilePic)}
+                                            alt="Profile Preview"
+                                            width={96}
+                                            height={96}
+                                            className="w-full h-full object-cover"
+                                        />
                                     ) : userData?.profilePicUrl ? (
-                                        <img src={userData.profilePicUrl} alt="Profile" className="w-full h-full object-cover" />
+                                        <Image
+                                            src={userData.profilePicUrl}
+                                            alt="Profile"
+                                            width={96}
+                                            height={96}
+                                            className="w-full h-full object-cover"
+                                        />
                                     ) : (
                                         <p className="text-sm md:text-base text-gray-500">No image</p>
                                     )}
@@ -272,18 +264,17 @@ const ProfilePage = () => {
                                     )}
                                 </div>
                             </div>
-                            {/* Right: Edit/Save Button and File Input */}
                             <div className="flex-1 flex flex-col items-center md:items-end">
                                 {editing ? (
                                     <button
-                                        className=" text-[#787474] border border-[#787474] py-2 px-6 rounded-lg mb-4 hover:bg-[#07327a] hover:text-white transition"
+                                        className="text-[#787474] border border-[#787474] py-2 px-6 rounded-lg mb-4 hover:bg-[#07327a] hover:text-white transition"
                                         onClick={handleProfileUpdate}
                                     >
                                         Save Changes
                                     </button>
                                 ) : (
                                     <button
-                                        className=" text-[#787474] border border-[#787474] py-2 px-6 rounded-lg mb-4 hover:bg-[#07327a] hover:text-white transition"
+                                        className="text-[#787474] border border-[#787474] py-2 px-6 rounded-lg mb-4 hover:bg-[#07327a] hover:text-white transition"
                                         onClick={() => setEditing(true)}
                                     >
                                         Edit Profile
@@ -305,8 +296,8 @@ const ProfilePage = () => {
                     <div>
                         <h2 className="text-xl md:text-2xl font-semibold mb-6 text-[#07327a]">Posts</h2>
                         {userData?.posts?.length ? (
-                            userData.posts.map((post) => (
-                                <div key={post.id} className="mb-6 p-4 bg-white shadow rounded-lg">
+                            userData.posts.map((post, index) => (
+                                <div key={post.id || index} className="mb-6 p-4 bg-white shadow rounded-lg">
                                     <h3 className="text-lg md:text-xl font-semibold mb-2 text-gray-800">{post.title}</h3>
                                     <p className="text-sm md:text-base text-gray-600">{post.content}</p>
                                 </div>
@@ -320,9 +311,10 @@ const ProfilePage = () => {
                     <div>
                         <h2 className="text-xl md:text-2xl font-semibold mb-6 text-[#07327a]">Bookmarks</h2>
                         {userData?.bookmarks?.length ? (
-                            userData.bookmarks.map((bookmark) => (
-                                <div key={bookmark.id} className="mb-6 p-4 bg-white shadow rounded-lg">
-                                    <h3 className="text-lg md:text-xl text-gray-800">{bookmark.title}</h3>
+                            userData.bookmarks.map((bookmarkId, index) => (
+                                <div key={bookmarkId || index} className="mb-6 p-4 bg-white shadow rounded-lg">
+                                    {/* Fetch title separately if needed, or display ID for now */}
+                                    <h3 className="text-lg md:text-xl text-gray-800">Post ID: {bookmarkId}</h3>
                                 </div>
                             ))
                         ) : (
@@ -334,8 +326,8 @@ const ProfilePage = () => {
                     <div>
                         <h2 className="text-xl md:text-2xl font-semibold mb-6 text-[#07327a]">Comments</h2>
                         {userData?.comments?.length ? (
-                            userData.comments.map((comment) => (
-                                <div key={comment.id} className="mb-6 p-4 bg-white shadow rounded-lg">
+                            userData.comments.map((comment, index) => (
+                                <div key={comment.id || index} className="mb-6 p-4 bg-white shadow rounded-lg">
                                     <p className="text-sm md:text-base text-gray-600">{comment.text}</p>
                                 </div>
                             ))
@@ -346,12 +338,11 @@ const ProfilePage = () => {
                 )}
             </div>
 
-            {/* Footer */}
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-gray-100 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 z-10">
-                <Link href="/" className=" text-[#787474] py-2 px-6 border border-[#787474]  rounded-lg w-full md:w-auto text-center hover:bg-[#07327a] hover:text-white transition">
+                <Link href="/" className="text-[#787474] py-2 px-6 border border-[#787474] rounded-lg w-full md:w-auto text-center hover:bg-[#07327a] hover:text-white transition">
                     Go to Homepage
                 </Link>
-                <Link href="/feed" className=" text-[#787474] py-2 px-6 border border-[#787474]  rounded-lg w-full md:w-auto text-center hover:bg-[#07327a] hover:text-white  transition">
+                <Link href="/onboarding/feed" className="text-[#787474] py-2 px-6 border border-[#787474] rounded-lg w-full md:w-auto text-center hover:bg-[#07327a] hover:text-white transition">
                     Go to Feed
                 </Link>
             </div>

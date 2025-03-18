@@ -1,9 +1,15 @@
-import mongoose, { Document, Model } from 'mongoose';
+import { Document, Model, FilterQuery, UpdateQuery, QueryOptions, SortOrder } from 'mongoose';
+
+interface FindOptions {
+    sort?: { [key: string]: SortOrder | { $meta: string } };
+    skip?: number;
+    limit?: number;
+}
 
 // Type-safe wrappers for Mongoose methods
 export async function findOne<T extends Document>(
     model: Model<T>,
-    filter: any
+    filter: FilterQuery<T> = {},
 ): Promise<T | null> {
     return model.findOne(filter).exec() as Promise<T | null>;
 }
@@ -18,25 +24,25 @@ export async function findById<T extends Document>(
 export async function findByIdAndUpdate<T extends Document>(
     model: Model<T>,
     id: string,
-    update: any,
-    options: { new?: boolean; upsert?: boolean } = { new: true }
+    update: UpdateQuery<T>,
+    options: QueryOptions = { new: true }
 ): Promise<T | null> {
     return model.findByIdAndUpdate(id, update, options).exec() as Promise<T | null>;
 }
 
 export async function findOneAndUpdate<T extends Document>(
     model: Model<T>,
-    filter: any,
-    update: any,
-    options: { new?: boolean; upsert?: boolean } = { new: true }
+    filter: FilterQuery<T>,
+    update: UpdateQuery<T>,
+    options: QueryOptions = { new: true }
 ): Promise<T | null> {
     return model.findOneAndUpdate(filter, update, options).exec() as Promise<T | null>;
 }
 
 export async function find<T extends Document>(
     model: Model<T>,
-    filter: any = {},
-    options: { sort?: any; skip?: number; limit?: number } = {}
+    filter: FilterQuery<T> = {},
+    options: FindOptions = {}
 ): Promise<T[]> {
     let query = model.find(filter);
 
@@ -55,9 +61,9 @@ export async function find<T extends Document>(
     return query.exec() as Promise<T[]>;
 }
 
-export async function countDocuments(
-    model: Model<any>,
-    filter: any = {}
+export async function countDocuments<T extends Document>(
+    model: Model<T>,
+    filter: FilterQuery<T> = {}
 ): Promise<number> {
     return model.countDocuments(filter).exec() as Promise<number>;
 }

@@ -11,7 +11,7 @@ const RegisterPageContent = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string>("");
     const [isLoading, setIsLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const router = useRouter();
@@ -76,14 +76,15 @@ const RegisterPageContent = () => {
             setTimeout(() => {
                 router.push("/dashboard");
             }, 1500);
-        } catch (error: Error | any) {
-            console.error("Registration error:", error.code || error.response?.status, error.message || error);
-            if (error.code === "auth/weak-password") {
+        } catch (error) {
+            const firebaseError = error as import('firebase/auth').AuthError;
+            console.error("Registration error:", firebaseError.code, firebaseError.message);
+            if (firebaseError.code === "auth/weak-password") {
                 setError("Password should be at least 6 characters.");
-            } else if (error.code === "auth/email-already-in-use") {
+            } else if (firebaseError.code === "auth/email-already-in-use") {
                 setError("Email already in use.");
             } else {
-                setError(`Error: ${error.message || "Unknown error occurred"}`);
+                setError(`Error: ${firebaseError.message || "Unknown error occurred"}`);
             }
         } finally {
             setIsLoading(false);

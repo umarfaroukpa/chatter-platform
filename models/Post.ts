@@ -14,9 +14,11 @@ export interface IPost extends Document {
         username: string;
         text: string;
         createdAt: string;
+        reactions?: Record<string, number>;
     }[];
     createdAt: string;
     updatedAt?: string;
+    uid?: string;
 }
 
 const PostSchema: Schema<IPost> = new Schema({
@@ -33,7 +35,8 @@ const PostSchema: Schema<IPost> = new Schema({
             userId: String,
             username: String,
             text: String,
-            createdAt: { type: String, default: () => new Date().toISOString() }
+            createdAt: { type: String, default: () => new Date().toISOString() },
+            reactions: { type: Map, of: Number, default: {} }
         }],
         default: []
     },

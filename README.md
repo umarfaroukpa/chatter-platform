@@ -86,17 +86,24 @@
     Project Structure
 
     chatter/
-    ├── app/                  # Next.js App Router directory
+    ├── app/                  
     │   ├── page.tsx          # Homepage
-    │   └── [...routes].tsx   # Dynamic routes (e.g., /auth/login, /dashboard)
-    ├── components/           # Reusable React components
-    │   ├── Header.tsx        # Responsive header with navigation and guide
-    │   └── WriterType.tsx    # Onboarding writer selection component
+    │   └── Auth   
+    |   |-Dasboard           
+    ├── components/           
+    │   ├── Header.tsx        
+    │   └── errorBoundary    
+    |___pages
+    |    |-onbordings
+    |    |-apis
+    |    |-_app.tsx
+    |    |-404.tsx
+    |    |_error.tsx                     
     ├── lib/                  # Utility files
     │   └── firebase.ts       # Firebase configuration and initialization
     ├── public/               # Static assets
     │   └── logo.png          # Chatter logo
-    ├── styles/               # Global styles (if any)
+    ├── styles/               # Global styles 
     ├── README.md             # This file
     ├── package.json          # Dependencies and scripts
     └── tsconfig.json         # TypeScript configuration

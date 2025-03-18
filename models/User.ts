@@ -28,7 +28,13 @@ const UserSchema: Schema = new Schema({
     domain: { type: String },
     posts: { type: [{ id: String, title: String }], default: [] },
     bookmarks: { type: [String], default: [] },
-    comments: { type: [String], default: [] },
+    comments: {
+        type: [{
+            id: { type: String, required: true },
+            text: { type: String, required: true }
+        }],
+        default: []
+    },
     profilePicFileId: { type: String }
 }, {
     // Important: Enable virtuals in toObject and toJSON

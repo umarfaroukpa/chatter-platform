@@ -30,9 +30,6 @@ export default function Page() {
     const [role, setRole] = useState(null);
     const router = useRouter();
 
-    const handleLogout = async () => {
-        setIsConfirming(true);
-    };
 
     const confirmLogout = async () => {
         try {
@@ -78,7 +75,6 @@ export default function Page() {
         <div className="relative flex justify-center items-center min-h-screen -mt-20 md:-mt-40">
             {logoutError && <p className="text-[#787474] mb-4 text-center">{logoutError}</p>}
             {successMessage && <p className="text-[#787474] mb-4 text-center">{successMessage}</p>}
-
             {isConfirming && (
                 <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 md:p-8 rounded-lg shadow-lg w-11/12 max-w-md">
@@ -88,6 +84,7 @@ export default function Page() {
                             <button
                                 className="bg-red-600 text-white py-2 px-6 rounded-lg"
                                 onClick={confirmLogout}
+
                             >
                                 Yes, Logout
                             </button>

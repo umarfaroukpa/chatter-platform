@@ -53,9 +53,10 @@ const LoginPageContent = () => {
             setTimeout(() => {
                 router.push("/dashboard");
             }, 1500);
-        } catch (error: Error | any) {
-            console.error("Firebase login error:", error.code || error.response?.status, error.message || error);
-            switch (error.code) {
+        } catch (error) {
+            const firebaseError = error as import('firebase/auth').AuthError;
+            console.error("Firebase login error:", firebaseError.code, firebaseError.message);
+            switch (firebaseError.code) {
                 case "auth/user-not-found":
                     setError("No user found with this email.");
                     break;
@@ -72,7 +73,7 @@ const LoginPageContent = () => {
                     setError("Too many login attempts. Please try again later.");
                     break;
                 default:
-                    setError(`Login failed: ${error.message} (Code: ${error.code})`);
+                    setError(`Login failed: ${firebaseError.message} (Code: ${firebaseError.code})`);
             }
         } finally {
             setIsLoading(false);
@@ -89,9 +90,10 @@ const LoginPageContent = () => {
         try {
             await sendPasswordResetEmail(auth, email);
             setSuccessMessage("Password reset email sent successfully.");
-        } catch (error: Error | any) {
-            console.error("Password reset error:", error.code || error.response?.status, error.message || error);
-            setError(`Failed to send password reset email: ${error.message}`);
+        } catch (error) {
+            const firebaseError = error as import('firebase/auth').AuthError;
+            console.error("Password reset error:", firebaseError.code, firebaseError.message);
+            setError(`Failed to send password reset email: ${firebaseError.message}`);
         }
     };
 

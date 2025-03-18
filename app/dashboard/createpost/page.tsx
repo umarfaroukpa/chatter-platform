@@ -5,7 +5,7 @@ import axios from "axios";
 import { auth } from "../../../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import RichTextEditor from "../../../components/TextEditor";
+import RichTextEditor from "../../components/TextEditor";
 
 const CreatePostPage = () => {
     const [title, setTitle] = useState("");
@@ -26,12 +26,12 @@ const CreatePostPage = () => {
                         const userData = response.data.data;
                         if (userData.userType !== "Writer") {
                             alert("Only Writers can create posts");
-                            router.push('/feed');
+                            router.push('/onboarding/feed');
                         }
                     }
                 } catch (error) {
                     console.error("Error fetching user data:", error);
-                    router.push('/feed');
+                    router.push('/onboarding/feed');
                 }
             } else {
                 router.push('/auth/login');
@@ -54,7 +54,7 @@ const CreatePostPage = () => {
             setLoading(true);
             const tagArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
 
-            const response = await axios.post("/api/posts", {
+            const response = await axios.post("/api/post", {
                 title,
                 content,
                 tags: tagArray,
@@ -63,7 +63,7 @@ const CreatePostPage = () => {
 
             if (response.data.success) {
                 alert("Post created successfully!");
-                router.push('/feed');
+                router.push('/onboarding/feed');
             } else {
                 alert("Failed to create post: " + response.data.error);
             }
@@ -126,7 +126,7 @@ const CreatePostPage = () => {
                 <div className="flex justify-end">
                     <button
                         type="button"
-                        onClick={() => router.push('/feed')}
+                        onClick={() => router.push('/onboarding/feed')}
                         className="mr-2 px-4 py-2 text-sm font-medium text-[#787474] bg-white border border-gray-300 rounded-md hover:bg-gray-50"
                     >
                         Cancel
