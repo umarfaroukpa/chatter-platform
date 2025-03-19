@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '../../../lib/mongodb';
 import Post, { IPost } from '../../../models/Post';
 import User, { IUserDocument } from '../../../models/User';
+import { Connection } from 'mongoose';
 import { findOne, findOneAndUpdate } from '../../../lib/mongoose-utils';
 
 interface Comment {
@@ -22,14 +23,15 @@ interface CommentResponse {
 }
 
 // Cached connection for better performance
-let cachedDb: any = null;
+let cachedDb: Connection | null = null;
 async function getDatabase() {
     if (cachedDb) return cachedDb;
-    cachedDb = await connectToDatabase();
+    const mongooseInstance = await connectToDatabase();
+    cachedDb = mongooseInstance.connection;
     return cachedDb;
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse<CommentResponse>> {
     try {
         await getDatabase();
 
@@ -66,7 +68,6 @@ export async function POST(request: NextRequest) {
         console.log("User found:", user._id);
         console.log("Looking up post...");
 
-        // Use findOne to query by postId instead of _id
         const post = await findOne<IPost>(Post, { postId });
         if (!post) {
             console.log("Post not found:", postId);
@@ -89,7 +90,6 @@ export async function POST(request: NextRequest) {
         console.log("Created comment object:", newComment);
         console.log("Updating post with new comment...");
 
-        // Update using findOneAndUpdate with postId
         const updatedPost = await findOneAndUpdate<IPost>(
             Post,
             { postId },

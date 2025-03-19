@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-
         const mongooseConnection = await connectToDatabase();
         const db = mongooseConnection.connection.db;
 
@@ -38,7 +37,7 @@ export async function GET(request: NextRequest) {
         let fileId;
         try {
             fileId = new ObjectId(user.profilePicFileId);
-        } catch (err) {
+        } catch {
             console.error('Invalid profilePicFileId format:', user.profilePicFileId);
             return NextResponse.json(
                 { success: false, message: 'Invalid profile picture ID format' },
@@ -59,11 +58,28 @@ export async function GET(request: NextRequest) {
 
         const downloadStream = bucket.openDownloadStream(fileId);
 
+        // Convert Node.js Readable to Web ReadableStream
+        const readableStream = new ReadableStream({
+            start(controller) {
+                downloadStream.on('data', (chunk) => {
+                    controller.enqueue(chunk);
+                });
+
+                downloadStream.on('end', () => {
+                    controller.close();
+                });
+
+                downloadStream.on('error', (err) => {
+                    controller.error(err);
+                });
+            },
+        });
+
         const headers = new Headers();
         headers.set('Content-Type', file.contentType || 'image/jpeg');
         headers.set('Cache-Control', 'public, max-age=31536000');
 
-        return new NextResponse(downloadStream as any, {
+        return new NextResponse(readableStream, {
             status: 200,
             headers,
         });

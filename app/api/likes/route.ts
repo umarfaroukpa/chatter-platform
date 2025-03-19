@@ -19,7 +19,7 @@ type ResponseData = {
     data?: Post;
 };
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse<ResponseData>> {
     let client: MongoClient | null = null;
 
     try {

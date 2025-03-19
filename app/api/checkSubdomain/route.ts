@@ -10,11 +10,6 @@ interface ISubdomain extends Document {
     createdAt?: Date;
 }
 
-interface Data {
-    available: boolean;
-    message: string;
-}
-
 export async function POST(request: Request) {
     try {
         const { subdomain, userId, reserve } = await request.json();

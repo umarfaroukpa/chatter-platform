@@ -8,7 +8,7 @@ interface UploadResponse {
     error?: string;
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse<UploadResponse>> {
     try {
         // Get form data from the request
         const formData = await request.formData();

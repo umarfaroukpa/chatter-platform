@@ -8,7 +8,7 @@ interface Comment {
     userId: string;
     username: string;
     text: string;
-    createdAt: string; // Changed from timestamp to match schema
+    createdAt: string;
     reactions?: Record<string, number>;
 }
 
@@ -24,7 +24,7 @@ interface UserData {
     username?: string;
 }
 
-const CommentSection = ({ postId, userId, comments, refreshPost }: CommentSectionProps) => {
+const CommentSection = ({ postId, comments, refreshPost }: CommentSectionProps) => {
     const [commentText, setCommentText] = useState("");
     const [userData, setUserData] = useState<UserData | null>(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -134,12 +134,16 @@ const CommentSection = ({ postId, userId, comments, refreshPost }: CommentSectio
                                         onClick={() => {
                                             setSelectedComment(comment._id);
                                             setShowEmojiPicker(!showEmojiPicker || selectedComment !== comment._id);
+                                            handleAddReaction(comment._id, '😀');
+
                                         }}
                                         className="text-[#787474] hover:text-gray-700"
                                     >
                                         😀 React
                                     </button>
+
                                     {/* Add EmojiPicker here if needed */}
+
                                 </div>
                             </div>
                             <p className="mt-2">{comment.text}</p>

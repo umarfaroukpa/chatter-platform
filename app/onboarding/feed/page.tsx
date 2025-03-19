@@ -162,11 +162,6 @@ const FeedPage = () => {
         return "/default-avatar.png";
     };
 
-    const handleLogout = () => {
-        setIsConfirmingLogout(true);
-        setIsMobileDrawerOpen(false);
-    };
-
     const confirmLogout = async () => {
         try {
             await signOut(auth);
@@ -441,7 +436,7 @@ const FeedPage = () => {
                         ) : filteredPosts.length === 0 ? (
                             <div className="text-center py-10">
                                 {searchTerm ? (
-                                    <p className="text-xl text-[#787474]">No posts found matching "{searchTerm}"</p>
+                                    <p className="text-xl text-[#787474]">No posts found matching &quot;{searchTerm}&quot;</p>
                                 ) : (
                                     <>
                                         <p className="text-xl text-[#787474]">No posts yet.</p>

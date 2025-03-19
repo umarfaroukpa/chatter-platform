@@ -33,7 +33,24 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
 
         const downloadStream = bucket.openDownloadStream(new ObjectId(id));
 
-        return new NextResponse(downloadStream as any, {
+        // Convert Node.js Readable to Web ReadableStream
+        const readableStream = new ReadableStream({
+            start(controller) {
+                downloadStream.on('data', (chunk) => {
+                    controller.enqueue(chunk);
+                });
+
+                downloadStream.on('end', () => {
+                    controller.close();
+                });
+
+                downloadStream.on('error', (err) => {
+                    controller.error(err);
+                });
+            },
+        });
+
+        return new NextResponse(readableStream, {
             status: 200,
             headers,
         });

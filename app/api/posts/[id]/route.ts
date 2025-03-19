@@ -9,9 +9,9 @@ async function connectToDatabase() {
     return cachedClient;
 }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { id } = params;
+        const { id } = await params;  // Await the params Promise
 
         let objectId;
         try {
@@ -44,7 +44,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
             },
             { status: 200 }
         );
-
     } catch (err) {
         const error = err as Error;
         console.error("Error retrieving post:", error);

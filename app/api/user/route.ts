@@ -18,7 +18,7 @@ interface UserResponseData {
   [key: string]: string | undefined;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<NextResponse<ApiResponse>> {
   try {
     const { uid } = await request.json();
 
