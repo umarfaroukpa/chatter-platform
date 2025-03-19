@@ -8,7 +8,6 @@ import Link from "next/link";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../lib/firebase";
 
-// Adjusted UserData to match actual backend data
 interface UserData {
     username: string;
     userType: string;
@@ -17,7 +16,7 @@ interface UserData {
     profilePicUrl?: string;
     tags: string[];
     posts: { id: string; title: string; content: string }[];
-    bookmarks: string[]; // Changed to string[] to match User model
+    bookmarks: string[];
     comments: { id: string; text: string }[];
 }
 
@@ -31,18 +30,10 @@ const Sidebar = ({ onTabChange, activeTab, isOpen, toggleSidebar }: { onTabChang
                 <h6 className="text-sm opacity-70">Manage Your Account Info</h6>
             </div>
             <div className="flex flex-col text-[#787474] mt-6">
-                <button onClick={() => onTabChange("profile")} className={`w-full text-left py-3 px-4 ${activeTab === "profile" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>
-                    My Profile
-                </button>
-                <button onClick={() => onTabChange("posts")} className={`w-full text-left py-3 px-4 ${activeTab === "posts" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>
-                    My Posts
-                </button>
-                <button onClick={() => onTabChange("bookmarks")} className={`w-full text-left py-3 px-4 ${activeTab === "bookmarks" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>
-                    Bookmarks
-                </button>
-                <button onClick={() => onTabChange("comments")} className={`w-full text-left py-3 px-4 ${activeTab === "comments" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>
-                    Comments
-                </button>
+                <button onClick={() => onTabChange("profile")} className={`w-full text-left py-3 px-4 ${activeTab === "profile" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>My Profile</button>
+                <button onClick={() => onTabChange("posts")} className={`w-full text-left py-3 px-4 ${activeTab === "posts" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>My Posts</button>
+                <button onClick={() => onTabChange("bookmarks")} className={`w-full text-left py-3 px-4 ${activeTab === "bookmarks" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>Bookmarks</button>
+                <button onClick={() => onTabChange("comments")} className={`w-full text-left py-3 px-4 ${activeTab === "comments" ? "bg-[#07327a] text-white" : "hover:bg-gray-200 hover:text-[#07327a]"}`}>Comments</button>
             </div>
             <button onClick={toggleSidebar} className="md:hidden absolute top-4 right-4 text-[#787474] hover:text-[#07327a]">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -63,51 +54,55 @@ const ProfilePage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const router = useRouter();
 
-    const fetchUserData = useCallback(async () => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const fetchUserData = useCallback(async (retries = 3, delay = 1000) => {
+        const user = auth.currentUser;
+        if (!user) {
+            setLoading(false);
+            router.push("/auth/login");
+            return;
+        }
+
+        try {
+            const response = await axios.post('/api/user', { uid: user.uid }, { headers: { 'Content-Type': 'application/json' } });
+            const result = response.data;
+
+            if (result.success) {
+                setUserData(result.data);
+                localStorage.setItem('currentUser', JSON.stringify({ uid: user.uid }));
+                setLoading(false);
+            } else if (result.error === 'User not found' && retries > 0) {
+                console.log(`User not found, retrying (${retries} attempts left)...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+                return fetchUserData(retries - 1, delay * 2);
+            } else {
+                setError('Failed to fetch user data: ' + result.error);
+                setLoading(false);
+            }
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response?.status === 404 && retries > 0) {
+                console.log(`404 received, retrying (${retries} attempts left)...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+                return fetchUserData(retries - 1, delay * 2);
+            } else {
+                const errorMessage = error instanceof Error ? error.message : "Unknown error";
+                console.error('Error fetching user data:', errorMessage);
+                setError(errorMessage);
+                setLoading(false);
+            }
+        }
+    }, [router]);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                try {
-                    const response = await axios.post('/api/user', { uid: user.uid }, { headers: { 'Content-Type': 'application/json' } });
-                    const result = response.data;
-                    if (result.success) {
-                        setUserData(result.data);
-                    } else {
-                        if (result.error === 'User not found') {
-                            const defaultData: UserData = {
-                                username: "Default User",
-                                userType: "unknown",
-                                email: user.email || "",
-                                phoneNumber: "",
-                                profilePicUrl: "",
-                                tags: [],
-                                posts: [],
-                                bookmarks: [],
-                                comments: [],
-                            };
-                            setUserData(defaultData);
-                            await axios.post('/api/profile', { uid: user.uid, profileData: defaultData });
-                        } else {
-                            setError('Failed to fetch user data: ' + result.error);
-                        }
-                    }
-                } catch (error: unknown) {
-                    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-                    console.error('Error fetching user data:', errorMessage);
-                    setError(errorMessage);
-                } finally {
-                    setLoading(false);
-                }
+                fetchUserData();
             } else {
                 setLoading(false);
                 router.push("/auth/login");
             }
         });
         return () => unsubscribe();
-    }, [router]);
-
-    useEffect(() => {
-        fetchUserData();
-    }, [fetchUserData]);
+    }, [fetchUserData, router]);
 
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
@@ -118,8 +113,16 @@ const ProfilePage = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
+    const validateEmail = (email: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+
     const handleProfileUpdate = async () => {
         if (userData) {
+            if (userData.email && !validateEmail(userData.email)) {
+                setError("Please enter a valid email address");
+                return;
+            }
             const profileDataToSend = {
                 username: userData.username || "Anonymous",
                 phoneNumber: userData.phoneNumber || "",
@@ -178,25 +181,36 @@ const ProfilePage = () => {
         );
     }
 
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <p className="text-red-500 mb-4">{error}</p>
+                    <button
+                        onClick={() => {
+                            setError(null);
+                            setLoading(true);
+                            fetchUserData();
+                        }}
+                        className="text-[#787474] py-2 px-4 rounded border border-[#787474] hover:bg-[#07327a] hover:text-white transition"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col min-h-screen md:flex-row relative">
             {error && <p className="text-red-500">Error: {error}</p>}
-
-            <button
-                onClick={toggleSidebar}
-                className="md:hidden fixed top-4 left-4 z-30 bg-[#07327a] text-white p-2 rounded-full shadow hover:bg-[#787474]"
-            >
+            <button onClick={toggleSidebar} className="md:hidden fixed top-4 left-4 z-30 bg-[#07327a] text-white p-2 rounded-full shadow hover:bg-[#787474]">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
-
             <Sidebar onTabChange={handleTabChange} activeTab={activeTab} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
-            {isSidebarOpen && (
-                <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-10" onClick={toggleSidebar}></div>
-            )}
-
+            {isSidebarOpen && <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-10" onClick={toggleSidebar}></div>}
             <div className="flex-1 p-6 md:p-8 md:ml-64">
                 {activeTab === "profile" && (
                     <div className="profile-page">
@@ -210,21 +224,9 @@ const ProfilePage = () => {
                             <div className="flex-1 flex flex-col items-center">
                                 <div className="profile-image bg-gray-200 w-20 h-20 md:w-24 md:h-24 rounded-full mb-4 flex items-center justify-center overflow-hidden">
                                     {newProfilePic ? (
-                                        <Image
-                                            src={URL.createObjectURL(newProfilePic)}
-                                            alt="Profile Preview"
-                                            width={96}
-                                            height={96}
-                                            className="w-full h-full object-cover"
-                                        />
+                                        <Image src={URL.createObjectURL(newProfilePic)} alt="Profile Preview" width={96} height={96} className="w-full h-full object-cover" />
                                     ) : userData?.profilePicUrl ? (
-                                        <Image
-                                            src={userData.profilePicUrl}
-                                            alt="Profile"
-                                            width={96}
-                                            height={96}
-                                            className="w-full h-full object-cover"
-                                        />
+                                        <Image src={userData.profilePicUrl} alt="Profile" width={96} height={96} className="w-full h-full object-cover" />
                                     ) : (
                                         <p className="text-sm md:text-base text-gray-500">No image</p>
                                     )}
@@ -266,28 +268,15 @@ const ProfilePage = () => {
                             </div>
                             <div className="flex-1 flex flex-col items-center md:items-end">
                                 {editing ? (
-                                    <button
-                                        className="text-[#787474] border border-[#787474] py-2 px-6 rounded-lg mb-4 hover:bg-[#07327a] hover:text-white transition"
-                                        onClick={handleProfileUpdate}
-                                    >
+                                    <button className="text-[#787474] border border-[#787474] py-2 px-6 rounded-lg mb-4 hover:bg-[#07327a] hover:text-white transition" onClick={handleProfileUpdate}>
                                         Save Changes
                                     </button>
                                 ) : (
-                                    <button
-                                        className="text-[#787474] border border-[#787474] py-2 px-6 rounded-lg mb-4 hover:bg-[#07327a] hover:text-white transition"
-                                        onClick={() => setEditing(true)}
-                                    >
+                                    <button className="text-[#787474] border border-[#787474] py-2 px-6 rounded-lg mb-4 hover:bg-[#07327a] hover:text-white transition" onClick={() => setEditing(true)}>
                                         Edit Profile
                                     </button>
                                 )}
-                                {editing && (
-                                    <input
-                                        type="file"
-                                        onChange={handleFileChange}
-                                        accept="image/*"
-                                        className="mt-4 text-sm md:text-base text-gray-700"
-                                    />
-                                )}
+                                {editing && <input type="file" onChange={handleFileChange} accept="image/*" className="mt-4 text-sm md:text-base text-gray-700" />}
                             </div>
                         </div>
                     </div>
@@ -313,7 +302,6 @@ const ProfilePage = () => {
                         {userData?.bookmarks?.length ? (
                             userData.bookmarks.map((bookmarkId, index) => (
                                 <div key={bookmarkId || index} className="mb-6 p-4 bg-white shadow rounded-lg">
-                                    {/* Fetch title separately if needed, or display ID for now */}
                                     <h3 className="text-lg md:text-xl text-gray-800">Post ID: {bookmarkId}</h3>
                                 </div>
                             ))
@@ -337,17 +325,13 @@ const ProfilePage = () => {
                     </div>
                 )}
             </div>
-
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-gray-100 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 z-10">
-                <Link href="/" className="text-[#787474] py-2 px-6 border border-[#787474] rounded-lg w-full md:w-auto text-center hover:bg-[#07327a] hover:text-white transition">
-                    Go to Homepage
-                </Link>
-                <Link href="/onboarding/feed" className="text-[#787474] py-2 px-6 border border-[#787474] rounded-lg w-full md:w-auto text-center hover:bg-[#07327a] hover:text-white transition">
-                    Go to Feed
-                </Link>
+                <Link href="/" className="text-[#787474] py-2 px-6 border border-[#787474] rounded-lg w-full md:w-auto text-center hover:bg-[#07327a] hover:text-white transition">Go to Homepage</Link>
+                <Link href="/onboarding/feed" className="text-[#787474] py-2 px-6 border border-[#787474] rounded-lg w-full md:w-auto text-center hover:bg-[#07327a] hover:text-white transition">Go to Feed</Link>
             </div>
         </div>
     );
 };
 
 export default ProfilePage;
+

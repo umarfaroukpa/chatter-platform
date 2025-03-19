@@ -174,8 +174,8 @@ export default function Home() {
             <div className="cursor-pointer" onClick={handleTwitterLogin}>
               <Image src="/rb_45422-removebg-preview.png" alt="Twitter" width={40} height={40} className="md:w-[50px] md:h-[50px]" />
             </div>
-            <div className="cursor-pointer" onClick={handleGithubLogin}>
-              <Image src="/github-64-removebg-preview.png" alt="Github" width={30} height={30} className="md:w-[35px] md:h-[35px]" />
+            <div className="cursor-pointer pt-2" onClick={handleGithubLogin}>
+              <Image src="/github-64-removebg-preview.png" alt="Github" width={35} height={35} className="md:w-[35px] md:h-[35px]" />
             </div>
           </div>
 

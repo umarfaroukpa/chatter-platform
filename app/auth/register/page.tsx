@@ -46,6 +46,7 @@ const RegisterPageContent = () => {
                 bookmarks: [],
                 comments: [],
             };
+            localStorage.setItem('currentUser', JSON.stringify({ uid: user.uid }));
 
             const mongoResponse = await axios.post("/api/profile", {
                 uid: user.uid,

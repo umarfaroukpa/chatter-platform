@@ -23,6 +23,8 @@ const Header = () => {
         const unsubscribe = onAuthStateChanged(auth, (authUser) => {
             if (authUser) {
                 setUser(authUser);
+                setSuccessMessage(null);
+                setLogoutError(null);
             } else {
                 setUser(null);
             }
@@ -30,6 +32,11 @@ const Header = () => {
 
         return () => unsubscribe();
     }, []);
+
+    useEffect(() => {
+        setSuccessMessage(null);
+        setLogoutError(null);
+    }, [pathname]);
 
     if (!pathname) {
         return null;
@@ -54,6 +61,7 @@ const Header = () => {
             setSuccessMessage("Logged out successfully!");
             setTimeout(() => {
                 router.push("/");
+                setSuccessMessage(null);
             }, 1500);
         } catch (error) {
             console.error("Error logging out:", error);

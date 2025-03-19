@@ -10,6 +10,7 @@ import Image from "next/image";
 import CommentSection from "../../components/CommentSection";
 import ErrorBoundary from "../../components/ErrorBoundary";
 
+
 const FeedPage = () => {
     const [feedPosts, setFeedPosts] = useState([]);
     const [filteredPosts, setFilteredPosts] = useState([]);
@@ -29,6 +30,8 @@ const FeedPage = () => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+            setLogoutMessage(null);
             if (user) {
                 setUser(user);
                 localStorage.setItem('currentUser', JSON.stringify({ uid: user.uid }));
@@ -167,7 +170,8 @@ const FeedPage = () => {
             await signOut(auth);
             setLogoutMessage("Logged out successfully!");
             setTimeout(() => {
-                router.push('/feed');
+                router.push('/');
+                setLogoutMessage(null);
             }, 1500);
         } catch (error) {
             console.error("Error logging out:", error);
