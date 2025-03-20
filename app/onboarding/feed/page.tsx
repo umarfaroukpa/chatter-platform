@@ -217,7 +217,9 @@ const FeedPage = () => {
         </div>
     );
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div className="flex items-center justify-center min-h-screen">
+        <div className="text-2xl font-bold text-[#07327a] animate-pulse">Loading...</div>
+    </div>
     if (error) throw new Error(error);
 
 
@@ -314,6 +316,15 @@ const FeedPage = () => {
                         </div>
 
                     )}
+
+                    {profileData?.userType === "Reader" && (
+                        <div className="mb-8">
+                            <Link href="/" className="block text-[#787474] border border-[#787474] py-2 px-4 rounded text-center hover:bg-[#07327a] hover:text-white transition">
+                                Go to Homepage
+                            </Link>
+                        </div>
+                    )}
+
 
 
                 </aside>

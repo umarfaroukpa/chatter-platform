@@ -7,13 +7,12 @@ if (!MONGODB_URI) {
     throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
 }
 
-//  I use module-level variables instead of namespace
 interface MongooseCache {
     conn: Mongoose | null;
     promise: Promise<Mongoose> | null;
 }
 
-// this is define in global scope 
+// Define in global scope
 const globalMongoose = global as unknown as {
     mongoose: MongooseCache | undefined;
 };
@@ -34,17 +33,46 @@ async function connectToDatabase(): Promise<Mongoose> {
     }
 
     if (!cached.promise) {
-        cached.promise = mongoose.connect(MONGODB_URI).then((mongooseInstance) => {
-            console.log('Connected to MongoDB');
-            return mongooseInstance;
-        }).catch((error) => {
-            console.error('Failed to connect to MongoDB:', error);
-            throw error;
-        });
+        const options = {
+            serverSelectionTimeoutMS: 10000, // Timeout after 10 seconds
+            socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+            connectTimeoutMS: 30000, // Try connecting for 30 seconds
+            retryWrites: true,
+            retryReads: true,
+            maxPoolSize: 10, // Maintain up to 10 socket connections
+        };
+
+        console.log('Connecting to MongoDB...');
+
+        cached.promise = mongoose.connect(MONGODB_URI, options)
+            .then((mongooseInstance) => {
+                console.log('Connected to MongoDB successfully');
+                return mongooseInstance;
+            })
+            .catch((error) => {
+                console.error('Failed to connect to MongoDB:', error);
+
+                // Try to provide more helpful error information
+                if (error.code === 'ETIMEOUT') {
+                    console.error('Connection timed out. This could be due to network issues, firewall settings, or incorrect hostname.');
+                } else if (error.code === 'ENOTFOUND') {
+                    console.error('Hostname not found. Please check your MongoDB URI for typos.');
+                } else if (error.message && error.message.includes('Authentication failed')) {
+                    console.error('Authentication failed. Please check your username and password in the connection string.');
+                }
+
+                throw error;
+            });
     }
 
-    cached.conn = await cached.promise;
-    return cached.conn;
+    try {
+        cached.conn = await cached.promise;
+        return cached.conn;
+    } catch (error) {
+        // Reset promise so next call tries to connect again
+        cached.promise = null;
+        throw error;
+    }
 }
 
 export default connectToDatabase;
